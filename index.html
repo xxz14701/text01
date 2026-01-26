@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="01.png">
-</head>
     <title>一個字一種顏色</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- 載入自訂字型 --- */
+        /* 載入自訂字型 */
         @font-face {
             font-family: 'GenSenRounded';
             src: url('GenSenRounded2TW-H.otf') format('opentype');
@@ -15,135 +15,37 @@
             font-style: normal;
         }
 
-        /* --- 基礎設定 --- */
-        :root {
-            --primary-color: #008080; /* 穩重的藍綠色,護眼且清晰 */
-            --primary-hover: #006666;
-            --bg-color: #fcfcf5; /* 暖米色背景,對比不刺眼 */
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-radius: 16px;
+        body {
+            font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #ffaffd;
         }
 
-        body { 
-            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            /* 防止手機橫向滑動 */
-            overflow-x: hidden; 
-        }
-
-        h2 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        /* --- 容器樣式 --- */
-        #container {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        /* 滑桿優化 */
+        input[type="range"] {
+            height: 30px;
+            -webkit-appearance: none;
             width: 100%;
-            max-width: 800px; /* 電腦版寬度加寬 */
-            box-sizing: border-box;
+            background: transparent;
         }
-
-        /* --- 分區卡片 --- */
-        .section-card {
-            background-color: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background: #ce0cea;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #555;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 24px;
-            background-color: var(--primary-color);
-            margin-right: 10px;
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #ffaffd;
             border-radius: 4px;
         }
 
-        /* --- 表單控制項 --- */
-        .form-group {
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 1.1rem; /* 標籤字體加大 */
-            color: #444;
-        }
-
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-            resize: vertical;
-            min-height: 100px;
-            font-size: 1.2rem; /* 輸入字體加大 */
-            padding: 15px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-        }
-        
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        /* --- 滑桿優化 (更容易拉動) --- */
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 25px; /* 加大觸控區 */
-            background: transparent;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 10px;
-            background: #ddd;
-            border-radius: 5px;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 32px; /* 按鈕變大 */
-            width: 32px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            margin-top: -11px; /* 置中 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            border: 2px solid #fff;
-        }
-
-        /* --- 顏色選擇器 --- */
+        /* 顏色選擇器 */
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
@@ -162,18 +64,6 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
 
-        #color-pickers-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start; /* 靠左對齊 */
-            gap: 10px;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            min-height: 60px;
-        }
-
-        /* 顏色選擇器下方的文字標示 */
         .color-wrapper {
             display: flex;
             flex-direction: column;
@@ -186,187 +76,148 @@
             font-weight: bold;
         }
 
-        /* --- 預覽區 --- */
-        #preview-container {
-            text-align: center;
+        /* 預覽區背景 */
+        .preview-bg {
             background-image: 
-                linear-gradient(45deg, #eee 25%, transparent 25%), 
-                linear-gradient(-45deg, #eee 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #eee 75%), 
-                linear-gradient(-45deg, transparent 75%, #eee 75%);
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            background-color: white; /* 棋盤格背景,方便看透明字 */
-            padding: 20px;
-            border-radius: 8px;
-            border: 2px dashed #ccc;
-            min-height: 150px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: auto; /* 避免文字超出 */
+            background-color: white;
         }
 
         #text-preview {
             display: inline-block;
             white-space: pre-wrap;
             word-wrap: break-word;
-            line-height: 1; /* 預設 */
+            line-height: 1;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
-        }
-
-        /* --- 按鈕區 --- */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            flex: 1;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            min-width: 200px; /* 防止按鈕在手機上太小 */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        
-        .checkbox-container input {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-        .footer-info {
-            text-align: center;
-            margin-top: 30px;
-            color: #777;
-            font-size: 0.9rem;
-        }
-
-        /* --- 手機版適配 --- */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            #container { padding: 15px; }
-            h2 { font-size: 1.5rem; }
-            .btn-group { flex-direction: column; }
-            button { width: 100%; }
         }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <div id="container">
-        <h2>❤️一個字一種顏色❤️</h2>
+    <!-- 標題區 -->
+    <header class="bg-orange-600 text-white p-6 text-center shadow-lg">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-wide">💚一個字一種顏色💚</h1>
+        <p class="text-lg mt-2 opacity-90">讓每個文字都擁有自己的色彩!</p>
+    </header>
+
+    <div class="container mx-auto p-4 max-w-6xl">
         
-        <!-- 步驟 1: 輸入文字 -->
-        <div class="section-card">
-            <div class="section-title">步驟 1:輸入文字</div>
-            <div class="form-group">
-                <textarea id="text-input" placeholder="請在這裡打字...">平安喜樂</textarea>
-            </div>
+        <div class="flex flex-col lg:flex-row gap-8">
             
-            <div class="form-group">
-                <label for="font-upload">📂 更換字型 (選填,支援 .ttf 檔案):</label>
-                <input type="file" id="font-upload" accept=".ttf,.otf" style="font-size: 1rem; padding: 10px;">
-            </div>
-        </div>
-
-        <!-- 步驟 2: 設定每個字的顏色 -->
-        <div class="section-card">
-            <div class="section-title">步驟 2:點擊圓圈換顏色</div>
-            <div id="color-pickers-container">
-                <!-- 這裡會自動產生顏色選擇器 -->
-            </div>
-            <p style="color: #666; font-size: 1rem; margin-top: 10px;">💡 小提示:上方的圓圈對應您輸入的每一個字。</p>
-        </div>
-
-        <!-- 步驟 3: 調整樣式 -->
-        <div class="section-card">
-            <div class="section-title">步驟 3:調整大小與樣式</div>
-            
-            <div class="form-group">
-                <label for="font-size">文字大小 (大/小): <span id="val-font-size">80</span></label>
-                <input type="range" id="font-size" min="20" max="200" value="80">
-            </div>
-
-            <div class="form-group">
-                <label for="letter-spacing">文字間距 (寬/窄): <span id="val-letter-spacing">2</span></label>
-                <input type="range" id="letter-spacing" min="0" max="50" value="2">
-            </div>
-
-            <div class="form-group">
-                <label for="line-height">行的高度 (高/低): <span id="val-line-height">1.2</span></label>
-                <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
-            </div>
-             
-            <div class="form-group" style="background: #eef; padding: 15px; border-radius: 8px;">
-                <label for="border-width">文字外框粗細:</label>
-                <input type="range" id="border-width" min="0" max="20" value="2">
+            <!-- 左側:設定區 -->
+            <div class="w-full lg:w-1/2 space-y-6">
                 
-                <div style="display: flex; align-items: center; margin-top: 10px;">
-                    <label for="border-color" style="margin:0 10px 0 0;">外框顏色:</label>
-                    <input type="color" id="border-color" value="#000000">
+                <!-- 步驟 1: 輸入文字 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-orange-100">
+                    <h2 class="text-xl font-bold mb-4 text-orange-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">1️⃣</span> 輸入文字
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-lg font-medium mb-2">請輸入文字:</label>
+                            <textarea id="text-input" rows="3" class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" placeholder="例如:平安喜樂">平安喜樂</textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-lg font-medium mb-2">更換字型 (選填):</label>
+                            <label class="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-orange-400 transition bg-gray-50">
+                                <span class="text-gray-600 font-medium">📂 點此選擇電腦裡的字型檔案</span>
+                                <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
+                            </label>
+                            <p id="fontNameDisplay" class="text-sm text-green-600 mt-1 hidden">✅ 已載入字型</p>
+                            <p class="text-gray-600 text-sm mt-1">💡 預設使用「源泉圓體」字型</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 步驟 2: 設定顏色 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-blue-100">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">2️⃣</span> 點擊圓圈改顏色
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 min-h-[100px]">
+                            <div id="color-pickers-container" class="flex flex-wrap justify-start gap-3">
+                                <!-- 這裡會自動產生顏色選擇器 -->
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">💡 小提示:上方的圓圈對應您輸入的每一個字。</p>
+                    </div>
+                </div>
+
+                <!-- 步驟 3: 調整樣式 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-purple-100">
+                    <h2 class="text-xl font-bold mb-4 text-purple-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">3️⃣</span> 調整大小與樣式
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字大小 (大/小): <span id="val-font-size" class="text-orange-600 font-bold">80</span></label>
+                                <input type="range" id="font-size" min="20" max="200" value="80">
+                            </div>
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字間距 (寬/窄): <span id="val-letter-spacing" class="text-orange-600 font-bold">2</span></label>
+                                <input type="range" id="letter-spacing" min="0" max="50" value="2">
+                            </div>
+                            <div>
+                                <label class="block text-lg font-medium mb-2">行的高度 (高/低): <span id="val-line-height" class="text-orange-600 font-bold">1.2</span></label>
+                                <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字外框粗細: <span id="val-border-width" class="text-orange-600 font-bold">2</span></label>
+                                <input type="range" id="border-width" min="0" max="20" value="2">
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <label class="text-lg font-medium">外框顏色:</label>
+                                <input type="color" id="border-color" value="#000000" class="h-12 w-20 rounded cursor-pointer border-2 border-gray-300">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 p-3 rounded-xl border border-gray-200">
+                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6 text-orange-600 rounded focus:ring-orange-500 border-gray-300 cursor-pointer">
+                            <label for="toggle-shadow" class="text-lg font-bold cursor-pointer select-none">開啟文字陰影 (立體感)</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右側:預覽與下載 -->
+            <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+                        👀 成果預覽
+                    </h2>
+                    
+                    <div class="preview-bg rounded-xl overflow-hidden border-2 border-gray-300 mb-6 flex justify-center items-center p-8 min-h-[300px]">
+                        <div id="text-preview"></div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button onclick="downloadPNG()" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white text-xl font-bold rounded-xl shadow-lg transform transition active:scale-95">
+                            ⬇️ 下載圖片 (背景透明)
+                        </button>
+                        <button onclick="downloadPNGWithBackground()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold rounded-xl shadow-lg transform transition active:scale-95">
+                            ⬇️ 下載圖片 (白色背景)
+                        </button>
+                    </div>
+
+                    <p class="text-center text-gray-500 mt-4 text-sm">
+                        Billy ^.^ | Program improved by AI @2026
+                    </p>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="toggle-shadow"> 
-                    開啟文字陰影 (立體感)
-                </label>
-            </div>
-        </div>
-
-        <!-- 預覽區 -->
-        <div class="section-card" style="border-color: var(--primary-color);">
-            <div class="section-title">✨ 成果預覽</div>
-            <div id="preview-container">
-                <div id="text-preview"></div>
-            </div>
-        </div>
-
-        <!-- 下載按鈕 -->
-        <div class="btn-group">
-            <button onclick="downloadPNG()">
-                ⬇️ 下載圖片<br><span style="font-size:0.8em">(背景透明)</span>
-            </button>
-            <button class="btn-secondary" onclick="downloadPNGWithBackground()">
-                ⬇️ 下載圖片<br><span style="font-size:0.8em">(白色背景)</span>
-            </button>
-        </div>
-
-        <div class="footer-info">
-            <p>Billy ^.^ | Program improved by AI @2026</p>
         </div>
     </div>
 
@@ -383,23 +234,21 @@
         const textPreview = document.getElementById('text-preview');
         const colorPickersContainer = document.getElementById('color-pickers-container');
         
-        // 用來顯示數值
         const valFontSize = document.getElementById('val-font-size');
         const valLetterSpacing = document.getElementById('val-letter-spacing');
         const valLineHeight = document.getElementById('val-line-height');
+        const valBorderWidth = document.getElementById('val-border-width');
 
-        let colorPickers = []; // 儲存顏色選擇器的 DOM 元素
+        let colorPickers = [];
 
         // 初始化
         textInput.addEventListener('input', handleTextInput);
         fontUpload.addEventListener('change', updateFont);
         
-        // 綁定樣式控制項
         [fontSize, letterSpacing, lineHeight, borderWidth, borderColor, toggleShadow].forEach(el => {
             el.addEventListener('input', updateStyle);
         });
 
-        // 頁面載入時先執行一次
         window.onload = function() {
             handleTextInput();
         };
@@ -408,17 +257,13 @@
             const text = textInput.value;
             const currentColors = [];
             
-            // 1. 先把目前的顏色存起來 (避免打字時顏色重置)
             const existingPickers = document.querySelectorAll('.color-picker');
             existingPickers.forEach(picker => currentColors.push(picker.value));
 
-            // 2. 清空容器
             colorPickersContainer.innerHTML = '';
             colorPickers = [];
 
-            // 3. 重新產生顏色選擇器
             text.split('').forEach((char, index) => {
-                // 如果是換行符號,就不產生顏色選擇器,但要處理
                 if (char === '\n') return;
 
                 const wrapper = document.createElement('div');
@@ -431,7 +276,6 @@
                 const colorPicker = document.createElement('input');
                 colorPicker.type = 'color';
                 colorPicker.className = 'color-picker';
-                // 嘗試恢復之前的顏色,如果沒有則預設黑色
                 colorPicker.value = currentColors[index] || '#000000'; 
                 
                 colorPicker.addEventListener('input', updateStyle);
@@ -447,29 +291,22 @@
         }
 
         function updateStyle() {
-            // 更新數值顯示
             valFontSize.textContent = fontSize.value;
             valLetterSpacing.textContent = letterSpacing.value;
             valLineHeight.textContent = lineHeight.value;
+            valBorderWidth.textContent = borderWidth.value;
 
-            // 更新預覽區樣式
             textPreview.style.fontSize = `${fontSize.value}px`;
             textPreview.style.letterSpacing = `${letterSpacing.value}px`;
             textPreview.style.lineHeight = lineHeight.value;
-            
-            // 外框處理 (Webkit stroke)
             textPreview.style.webkitTextStrokeWidth = `${borderWidth.value}px`;
             textPreview.style.webkitTextStrokeColor = borderColor.value;
-            
-            // 陰影處理
             textPreview.style.textShadow = toggleShadow.checked ? '4px 4px 6px rgba(0,0,0,0.5)' : 'none';
 
-            // 重新組合文字 HTML
             let pickerIndex = 0;
             const textHTML = textInput.value.split('').map((char) => {
                 if (char === '\n') return '<br>';
                 
-                // 取得對應的顏色
                 const color = colorPickers[pickerIndex] ? colorPickers[pickerIndex].value : '#000000';
                 pickerIndex++;
                 
@@ -483,6 +320,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
+            document.getElementById('fontNameDisplay').classList.remove('hidden');
             const reader = new FileReader();
             reader.onload = function(e) {
                 const font = new FontFace('customFont', `url(${e.target.result})`);
@@ -497,7 +335,6 @@
         }
 
         function downloadPNG() {
-            // 暫時隱藏外框與背景,確保乾淨的截圖
             html2canvas(textPreview, { 
                 backgroundColor: null, 
                 scale: 2,
@@ -526,11 +363,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
