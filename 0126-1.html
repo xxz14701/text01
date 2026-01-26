@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>多彩文字產生器 - 長輩友善版</title>
+    <style>
+        /* --- 基礎設定 --- */
+        :root {
+            --primary-color: #008080; /* 穩重的藍綠色，護眼且清晰 */
+            --primary-hover: #006666;
+            --bg-color: #fcfcf5; /* 暖米色背景，對比不刺眼 */
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 16px;
+        }
+
+        body { 
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            /* 防止手機橫向捲動 */
+            overflow-x: hidden; 
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* --- 容器樣式 --- */
+        #container {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 800px; /* 電腦版寬度加寬 */
+            box-sizing: border-box;
+        }
+
+        /* --- 分區卡片 --- */
+        .section-card {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background-color: var(--primary-color);
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        /* --- 表單控制項 --- */
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1.1rem; /* 標籤字體加大 */
+            color: #444;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 1.2rem; /* 輸入字體加大 */
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- 滑桿優化 (更容易拉動) --- */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px; /* 加大觸控區 */
+            background: transparent;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 32px; /* 按鈕變大 */
+            width: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            margin-top: -11px; /* 置中 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 2px solid #fff;
+        }
+
+        /* --- 顏色選擇器 --- */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 3px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        #color-pickers-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start; /* 靠左對齊 */
+            gap: 10px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 60px;
+        }
+
+        /* 顏色選擇器下方的文字標示 */
+        .color-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50px;
+        }
+        .color-char-label {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* --- 預覽區 --- */
+        #preview-container {
+            text-align: center;
+            background-image: 
+                linear-gradient(45deg, #eee 25%, transparent 25%), 
+                linear-gradient(-45deg, #eee 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #eee 75%), 
+                linear-gradient(-45deg, transparent 75%, #eee 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: white; /* 棋盤格背景，方便看透明字 */
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto; /* 避免文字超出 */
+        }
+
+        #text-preview {
+            display: inline-block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1; /* 預設 */
+        }
+
+        /* --- 按鈕區 --- */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            min-width: 200px; /* 防止按鈕在手機上太小 */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .checkbox-container input {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .footer-info {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* --- 手機版適配 --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            #container { padding: 15px; }
+            h2 { font-size: 1.5rem; }
+            .btn-group { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h2>🎨 多彩文字產生器</h2>
+        
+        <!-- 步驟 1: 輸入文字 -->
+        <div class="section-card">
+            <div class="section-title">步驟 1：輸入文字</div>
+            <div class="form-group">
+                <textarea id="text-input" placeholder="請在這裡打字...">平安喜樂</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="font-upload">📂 更換字型 (選填，支援 .ttf 檔案):</label>
+                <input type="file" id="font-upload" accept=".ttf,.otf" style="font-size: 1rem; padding: 10px;">
+            </div>
+        </div>
+
+        <!-- 步驟 2: 設定每個字的顏色 -->
+        <div class="section-card">
+            <div class="section-title">步驟 2：點擊圓圈換顏色</div>
+            <div id="color-pickers-container">
+                <!-- 這裡會自動產生顏色選擇器 -->
+            </div>
+            <p style="color: #666; font-size: 1rem; margin-top: 10px;">💡 小提示：上方的圓圈對應您輸入的每一個字。</p>
+        </div>
+
+        <!-- 步驟 3: 調整樣式 -->
+        <div class="section-card">
+            <div class="section-title">步驟 3：調整大小與樣式</div>
+            
+            <div class="form-group">
+                <label for="font-size">文字大小 (大/小): <span id="val-font-size">80</span></label>
+                <input type="range" id="font-size" min="20" max="200" value="80">
+            </div>
+
+            <div class="form-group">
+                <label for="letter-spacing">文字間距 (寬/窄): <span id="val-letter-spacing">2</span></label>
+                <input type="range" id="letter-spacing" min="0" max="50" value="2">
+            </div>
+
+            <div class="form-group">
+                <label for="line-height">行的高度 (高/低): <span id="val-line-height">1.2</span></label>
+                <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
+            </div>
+             
+            <div class="form-group" style="background: #eef; padding: 15px; border-radius: 8px;">
+                <label for="border-width">文字外框粗細:</label>
+                <input type="range" id="border-width" min="0" max="20" value="2">
+                
+                <div style="display: flex; align-items: center; margin-top: 10px;">
+                    <label for="border-color" style="margin:0 10px 0 0;">外框顏色:</label>
+                    <input type="color" id="border-color" value="#000000">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="toggle-shadow"> 
+                    開啟文字陰影 (立體感)
+                </label>
+            </div>
+        </div>
+
+        <!-- 預覽區 -->
+        <div class="section-card" style="border-color: var(--primary-color);">
+            <div class="section-title">✨ 成果預覽</div>
+            <div id="preview-container">
+                <div id="text-preview"></div>
+            </div>
+        </div>
+
+        <!-- 下載按鈕 -->
+        <div class="btn-group">
+            <button onclick="downloadPNG()">
+                ⬇️ 下載圖片<br><span style="font-size:0.8em">(背景透明)</span>
+            </button>
+            <button class="btn-secondary" onclick="downloadPNGWithBackground()">
+                ⬇️ 下載圖片<br><span style="font-size:0.8em">(白色背景)</span>
+            </button>
+        </div>
+
+        <div class="footer-info">
+            <p>Billy ^.^ | Program improved by Gemini @2026</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const textInput = document.getElementById('text-input');
+        const fontUpload = document.getElementById('font-upload');
+        const fontSize = document.getElementById('font-size');
+        const letterSpacing = document.getElementById('letter-spacing');
+        const lineHeight = document.getElementById('line-height');
+        const borderWidth = document.getElementById('border-width');
+        const borderColor = document.getElementById('border-color');
+        const toggleShadow = document.getElementById('toggle-shadow');
+        const textPreview = document.getElementById('text-preview');
+        const colorPickersContainer = document.getElementById('color-pickers-container');
+        
+        // 用來顯示數值
+        const valFontSize = document.getElementById('val-font-size');
+        const valLetterSpacing = document.getElementById('val-letter-spacing');
+        const valLineHeight = document.getElementById('val-line-height');
+
+        let colorPickers = []; // 儲存顏色選擇器的 DOM 元素
+
+        // 初始化
+        textInput.addEventListener('input', handleTextInput);
+        fontUpload.addEventListener('change', updateFont);
+        
+        // 綁定樣式控制項
+        [fontSize, letterSpacing, lineHeight, borderWidth, borderColor, toggleShadow].forEach(el => {
+            el.addEventListener('input', updateStyle);
+        });
+
+        // 頁面載入時先執行一次
+        window.onload = function() {
+            handleTextInput();
+        };
+
+        function handleTextInput() {
+            const text = textInput.value;
+            const currentColors = [];
+            
+            // 1. 先把目前的顏色存起來 (避免打字時顏色重置)
+            const existingPickers = document.querySelectorAll('.color-picker');
+            existingPickers.forEach(picker => currentColors.push(picker.value));
+
+            // 2. 清空容器
+            colorPickersContainer.innerHTML = '';
+            colorPickers = [];
+
+            // 3. 重新產生顏色選擇器
+            text.split('').forEach((char, index) => {
+                // 如果是換行符號，就不產生顏色選擇器，但要處理
+                if (char === '\n') return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'color-wrapper';
+
+                const label = document.createElement('span');
+                label.className = 'color-char-label';
+                label.textContent = char;
+
+                const colorPicker = document.createElement('input');
+                colorPicker.type = 'color';
+                colorPicker.className = 'color-picker';
+                // 嘗試恢復之前的顏色，如果沒有則預設黑色
+                colorPicker.value = currentColors[index] || '#000000'; 
+                
+                colorPicker.addEventListener('input', updateStyle);
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(colorPicker);
+                colorPickersContainer.appendChild(wrapper);
+                
+                colorPickers.push(colorPicker);
+            });
+
+            updateStyle();
+        }
+
+        function updateStyle() {
+            // 更新數值顯示
+            valFontSize.textContent = fontSize.value;
+            valLetterSpacing.textContent = letterSpacing.value;
+            valLineHeight.textContent = lineHeight.value;
+
+            // 更新預覽區樣式
+            textPreview.style.fontSize = `${fontSize.value}px`;
+            textPreview.style.letterSpacing = `${letterSpacing.value}px`;
+            textPreview.style.lineHeight = lineHeight.value;
+            
+            // 外框處理 (Webkit stroke)
+            textPreview.style.webkitTextStrokeWidth = `${borderWidth.value}px`;
+            textPreview.style.webkitTextStrokeColor = borderColor.value;
+            
+            // 陰影處理
+            textPreview.style.textShadow = toggleShadow.checked ? '4px 4px 6px rgba(0,0,0,0.5)' : 'none';
+
+            // 重新組合文字 HTML
+            let pickerIndex = 0;
+            const textHTML = textInput.value.split('').map((char) => {
+                if (char === '\n') return '<br>';
+                
+                // 取得對應的顏色
+                const color = colorPickers[pickerIndex] ? colorPickers[pickerIndex].value : '#000000';
+                pickerIndex++;
+                
+                return `<span style="color: ${color};">${char}</span>`;
+            }).join('');
+
+            textPreview.innerHTML = textHTML;
+        }
+
+        function updateFont(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const font = new FontFace('customFont', `url(${e.target.result})`);
+                font.load().then(function(loadedFont) {
+                    document.fonts.add(loadedFont);
+                    textPreview.style.fontFamily = 'customFont';
+                }).catch(err => {
+                    alert('字型載入失敗，請確認檔案格式是否正確。');
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function downloadPNG() {
+            // 暫時隱藏外框與背景，確保乾淨的截圖
+            html2canvas(textPreview, { 
+                backgroundColor: null, 
+                scale: 2,
+                logging: false
+            }).then(canvas => {
+                saveCanvasAsImage(canvas, 'my_colorful_text_transparent.png');
+            });
+        }
+
+        function downloadPNGWithBackground() {
+            html2canvas(textPreview, { 
+                backgroundColor: '#ffffff', 
+                scale: 2,
+                logging: false
+            }).then(canvas => {
+                saveCanvasAsImage(canvas, 'my_colorful_text_white.png');
+            });
+        }
+
+        function saveCanvasAsImage(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
