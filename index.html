@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>多彩文字產生器 - 長輩友善版</title>
     <style>
+        /* --- 載入自訂字型 --- */
+        @font-face {
+            font-family: 'GenSenRounded';
+            src: url('https://xxz14701.github.io/text01/GenSenRounded2TW-H.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         /* --- 基礎設定 --- */
         :root {
-            --primary-color: #008080; /* 穩重的藍綠色，護眼且清晰 */
+            --primary-color: #008080; /* 穩重的藍綠色,護眼且清晰 */
             --primary-hover: #006666;
-            --bg-color: #fcfcf5; /* 暖米色背景，對比不刺眼 */
+            --bg-color: #fcfcf5; /* 暖米色背景,對比不刺眼 */
             --card-bg: #ffffff;
             --text-color: #333333;
             --border-radius: 16px;
@@ -25,7 +33,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            /* 防止手機橫向捲動 */
+            /* 防止手機橫向滑動 */
             overflow-x: hidden; 
         }
 
@@ -186,7 +194,7 @@
                 linear-gradient(-45deg, transparent 75%, #eee 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            background-color: white; /* 棋盤格背景，方便看透明字 */
+            background-color: white; /* 棋盤格背景,方便看透明字 */
             padding: 20px;
             border-radius: 8px;
             border: 2px dashed #ccc;
@@ -202,6 +210,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             line-height: 1; /* 預設 */
+            font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
         }
 
         /* --- 按鈕區 --- */
@@ -279,29 +288,29 @@
         
         <!-- 步驟 1: 輸入文字 -->
         <div class="section-card">
-            <div class="section-title">步驟 1：輸入文字</div>
+            <div class="section-title">步驟 1:輸入文字</div>
             <div class="form-group">
                 <textarea id="text-input" placeholder="請在這裡打字...">平安喜樂</textarea>
             </div>
             
             <div class="form-group">
-                <label for="font-upload">📂 更換字型 (選填，支援 .ttf 檔案):</label>
+                <label for="font-upload">📂 更換字型 (選填,支援 .ttf 檔案):</label>
                 <input type="file" id="font-upload" accept=".ttf,.otf" style="font-size: 1rem; padding: 10px;">
             </div>
         </div>
 
         <!-- 步驟 2: 設定每個字的顏色 -->
         <div class="section-card">
-            <div class="section-title">步驟 2：點擊圓圈換顏色</div>
+            <div class="section-title">步驟 2:點擊圓圈換顏色</div>
             <div id="color-pickers-container">
                 <!-- 這裡會自動產生顏色選擇器 -->
             </div>
-            <p style="color: #666; font-size: 1rem; margin-top: 10px;">💡 小提示：上方的圓圈對應您輸入的每一個字。</p>
+            <p style="color: #666; font-size: 1rem; margin-top: 10px;">💡 小提示:上方的圓圈對應您輸入的每一個字。</p>
         </div>
 
         <!-- 步驟 3: 調整樣式 -->
         <div class="section-card">
-            <div class="section-title">步驟 3：調整大小與樣式</div>
+            <div class="section-title">步驟 3:調整大小與樣式</div>
             
             <div class="form-group">
                 <label for="font-size">文字大小 (大/小): <span id="val-font-size">80</span></label>
@@ -407,7 +416,7 @@
 
             // 3. 重新產生顏色選擇器
             text.split('').forEach((char, index) => {
-                // 如果是換行符號，就不產生顏色選擇器，但要處理
+                // 如果是換行符號,就不產生顏色選擇器,但要處理
                 if (char === '\n') return;
 
                 const wrapper = document.createElement('div');
@@ -420,7 +429,7 @@
                 const colorPicker = document.createElement('input');
                 colorPicker.type = 'color';
                 colorPicker.className = 'color-picker';
-                // 嘗試恢復之前的顏色，如果沒有則預設黑色
+                // 嘗試恢復之前的顏色,如果沒有則預設黑色
                 colorPicker.value = currentColors[index] || '#000000'; 
                 
                 colorPicker.addEventListener('input', updateStyle);
@@ -479,20 +488,20 @@
                     document.fonts.add(loadedFont);
                     textPreview.style.fontFamily = 'customFont';
                 }).catch(err => {
-                    alert('字型載入失敗，請確認檔案格式是否正確。');
+                    alert('字型載入失敗,請確認檔案格式是否正確。');
                 });
             };
             reader.readAsDataURL(file);
         }
 
         function downloadPNG() {
-            // 暫時隱藏外框與背景，確保乾淨的截圖
+            // 暫時隱藏外框與背景,確保乾淨的截圖
             html2canvas(textPreview, { 
                 backgroundColor: null, 
                 scale: 2,
                 logging: false
             }).then(canvas => {
-                saveCanvasAsImage(canvas, 'my_colorful_text_transparent.png');
+                saveCanvasAsImage(canvas, 'text_transparent.png');
             });
         }
 
@@ -502,7 +511,7 @@
                 scale: 2,
                 logging: false
             }).then(canvas => {
-                saveCanvasAsImage(canvas, 'my_colorful_text_white.png');
+                saveCanvasAsImage(canvas, 'text_white.png');
             });
         }
 
