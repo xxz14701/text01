@@ -221,7 +221,6 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const textInput = document.getElementById('text-input');
         const fontUpload = document.getElementById('font-upload');
@@ -334,24 +333,126 @@
             reader.readAsDataURL(file);
         }
 
-        function downloadPNG() {
-            html2canvas(textPreview, { 
-                backgroundColor: null, 
-                scale: 2,
-                logging: false
-            }).then(canvas => {
-                saveCanvasAsImage(canvas, 'text_trans.png');
+        // ─── 用 Canvas API 直接畫字，完全不依賴 html2canvas ───
+        function renderToCanvas(bgColor) {
+            const scale       = 2;
+            const size        = parseInt(fontSize.value);
+            const spacing     = parseInt(letterSpacing.value);
+            const lh          = parseFloat(lineHeight.value);
+            const stroke      = parseInt(borderWidth.value) || 0;
+            const strokeCol   = borderColor.value;
+            const shadow      = toggleShadow.checked;
+            const fontFamily  = textPreview.style.fontFamily || "'GenSenRounded', 'Microsoft JhengHei', sans-serif";
+            const fontStr     = `${size}px ${fontFamily}`;
+
+            // 把輸入文字按行分割
+            const lines = textInput.value.split('\n');
+
+            // ── 先用一個暫時的 canvas 來量測 ──
+            const measure = document.createElement('canvas');
+            const mCtx    = measure.getContext('2d');
+            mCtx.font     = fontStr;
+
+            // 量每一行的寬度，取最寬者
+            let maxW = 0;
+            lines.forEach(line => {
+                // 每個字的寬度 + letter-spacing（最後一個字不加）
+                let lineW = 0;
+                for (let i = 0; i < line.length; i++) {
+                    lineW += mCtx.measureText(line[i]).width;
+                    if (i < line.length - 1) lineW += spacing;
+                }
+                if (lineW > maxW) maxW = lineW;
             });
+
+            const lineH   = size * lh;
+            const totalH  = lineH * lines.length;
+
+            // padding：stroke 兩邊各膨張, shadow 最多超出 offset+blur = 4+6=10
+            const shadowPad = shadow ? 14 : 0;
+            const pad       = stroke + shadowPad + 12;   // 基本 margin 12px
+
+            // ── 建正式 canvas ──
+            const canvas  = document.createElement('canvas');
+            canvas.width  = (maxW  + pad * 2) * scale;
+            canvas.height = (totalH + pad * 2) * scale;
+            const ctx     = canvas.getContext('2d');
+            ctx.scale(scale, scale);
+
+            // 畫背景
+            if (bgColor) {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
+            }
+
+            // shadow 設定
+            if (shadow) {
+                ctx.shadowColor   = 'rgba(0,0,0,0.5)';
+                ctx.shadowOffsetX = 4;
+                ctx.shadowOffsetY = 4;
+                ctx.shadowBlur    = 6;
+            }
+
+            ctx.font        = fontStr;
+            ctx.textBaseline = 'middle';   // middle 讓上下自動對齊
+
+            // 收集每個字的顏色（跟 colorPickers 順序一致，跳過 \n）
+            const chars  = [];
+            const colors = [];
+            let pIdx = 0;
+            textInput.value.split('').forEach(ch => {
+                if (ch === '\n') { chars.push('\n'); colors.push(null); return; }
+                chars.push(ch);
+                colors.push(colorPickers[pIdx] ? colorPickers[pIdx].value : '#000000');
+                pIdx++;
+            });
+
+            // ── 逐行逐字畫 ──
+            let charIdx = 0;
+            lines.forEach((line, lineIdx) => {
+                // 這一行的文字總寬（用來左右居中）
+                let lineW = 0;
+                for (let i = 0; i < line.length; i++) {
+                    lineW += ctx.measureText(line[i]).width;
+                    if (i < line.length - 1) lineW += spacing;
+                }
+                let x = pad + (maxW - lineW) / 2;   // 左右居中
+                const y = pad + lineH * lineIdx + lineH / 2;  // 上下居中於該行
+
+                for (let i = 0; i < line.length; i++) {
+                    const ch    = line[i];
+                    const color = colors[charIdx] || '#000000';
+                    const charW = ctx.measureText(ch).width;
+
+                    // 先畫 stroke（外框）
+                    if (stroke > 0) {
+                        ctx.strokeStyle  = strokeCol;
+                        ctx.lineWidth    = stroke * 2;  // stroke 向兩邊各膨張一半
+                        ctx.lineJoin     = 'round';
+                        ctx.strokeText(ch, x, y);
+                    }
+
+                    // 畫本體
+                    ctx.fillStyle = color;
+                    ctx.fillText(ch, x, y);
+
+                    x += charW + spacing;
+                    charIdx++;
+                }
+                charIdx++; // 跳過 \n
+            });
+
+            return canvas;
+        }
+
+        function downloadPNG() {
+            const canvas = renderToCanvas(null);
+            saveCanvasAsImage(canvas, 'text_trans.png');
         }
 
         function downloadPNGWithBackground() {
-            html2canvas(textPreview, { 
-                backgroundColor: '#ffffff', 
-                scale: 2,
-                logging: false
-            }).then(canvas => {
-                saveCanvasAsImage(canvas, 'text_white.png');
-            });
+            const canvas = renderToCanvas('#ffffff');
+            saveCanvasAsImage(canvas, 'text_white.png');
         }
 
         function saveCanvasAsImage(canvas, filename) {
@@ -363,9 +464,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
