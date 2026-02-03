@@ -95,6 +95,15 @@
             line-height: 1;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
         }
+
+        /* 尺寸預設按鈕 */
+        .preset-btn { transition: all 0.15s; }
+        .preset-btn.active-preset {
+            border-color: #ea580c !important;
+            background-color: #fff7ed !important;
+            color: #c2410c !important;
+            font-weight: 700 !important;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -176,7 +185,7 @@
                         <div class="bg-gray-50 p-4 rounded-xl space-y-4">
                             <div>
                                 <label class="block text-lg font-medium mb-2">文字外框粗細: <span id="val-border-width" class="text-orange-600 font-bold">2</span></label>
-                                <input type="range" id="border-width" min="0" max="20" value="1">
+                                <input type="range" id="border-width" min="0" max="20" value="2">
                             </div>
                             <div class="flex items-center gap-4">
                                 <label class="text-lg font-medium">外框顏色:</label>
@@ -202,6 +211,25 @@
                     
                     <div class="preview-bg rounded-xl overflow-hidden border-2 border-gray-300 mb-6 flex justify-center items-center p-8 min-h-[300px]">
                         <div id="text-preview"></div>
+                    </div>
+
+                    <!-- 下載尺寸選擇 -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
+                        <label class="block text-lg font-bold mb-3 text-gray-700">📐 下載尺寸</label>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <button onclick="selectPreset(this,0,0)"    class="preset-btn active-preset px-3 py-1.5 rounded-lg border-2 border-orange-400 bg-orange-50 text-orange-700 font-bold text-sm">原圖大小</button>
+                            <button onclick="selectPreset(this,370,320)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">370 × 320</button>
+                            <button onclick="selectPreset(this,500,500)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">500 × 500</button>
+                            <button onclick="selectPreset(this,800,600)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">800 × 600</button>
+                            <button onclick="selectPreset(this,1080,1080)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">1080 × 1080</button>
+                            <button onclick="selectPreset(this,-1,-1)"  class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">自定義</button>
+                        </div>
+                        <div id="custom-size-row" class="flex items-center gap-2 hidden mt-2">
+                            <input type="number" id="custom-w" min="50" max="4000" value="370" class="w-20 border-2 border-gray-300 rounded-lg px-2 py-1 text-center text-lg font-bold focus:border-orange-400 outline-none">
+                            <span class="text-lg font-bold text-gray-500">×</span>
+                            <input type="number" id="custom-h" min="50" max="4000" value="320" class="w-20 border-2 border-gray-300 rounded-lg px-2 py-1 text-center text-lg font-bold focus:border-orange-400 outline-none">
+                            <span class="text-sm text-gray-500 ml-1">px</span>
+                        </div>
                     </div>
 
                     <div class="space-y-3">
@@ -445,23 +473,83 @@
             return canvas;
         }
 
+        // ─── 尺寸選擇 ───
+        let downloadW = 0, downloadH = 0;   // 0 = 原圖大小
+
+        function selectPreset(btn, w, h) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
+            btn.classList.add('active-preset');
+            const customRow = document.getElementById('custom-size-row');
+            if (w === -1) {
+                customRow.classList.remove('hidden');
+                downloadW = -1; downloadH = -1;
+            } else {
+                customRow.classList.add('hidden');
+                downloadW = w; downloadH = h;
+            }
+        }
+
+        function getDownloadSize() {
+            if (downloadW === -1) {
+                return {
+                    w: Math.max(1, parseInt(document.getElementById('custom-w').value) || 370),
+                    h: Math.max(1, parseInt(document.getElementById('custom-h').value) || 320)
+                };
+            }
+            return { w: downloadW, h: downloadH };
+        }
+
+        // ─── 下載 ───
         function downloadPNG() {
             const canvas = renderToCanvas(null);
-            saveCanvasAsImage(canvas, 'text_trans.png');
+            saveCanvasAsImage(canvas, 'text_trans.png', null);
         }
 
         function downloadPNGWithBackground() {
             const canvas = renderToCanvas('#ffffff');
-            saveCanvasAsImage(canvas, 'text_white.png');
+            saveCanvasAsImage(canvas, 'text_white.png', '#ffffff');
         }
 
-        function saveCanvasAsImage(canvas, filename) {
+        /**
+         * 如果選了固定尺寸，建一張新 canvas（指定大小），
+         * 將原圖【等比例縮放】後居中貼入，多餘處填背景色（透明或白）。
+         * 這樣文字永遠不會變形。
+         */
+        function saveCanvasAsImage(srcCanvas, filename, bgColor) {
+            const { w, h } = getDownloadSize();
+            let finalCanvas = srcCanvas;
+
+            if (w !== 0 && h !== 0) {
+                finalCanvas = document.createElement('canvas');
+                finalCanvas.width  = w;
+                finalCanvas.height = h;
+                const ctx = finalCanvas.getContext('2d');
+
+                // 先畫背景
+                if (bgColor) {
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, w, h);
+                }
+                // 等比縮放：取寬、高中較小的縮放比
+                const scaleX = w / srcCanvas.width;
+                const scaleY = h / srcCanvas.height;
+                const scale  = Math.min(scaleX, scaleY);
+
+                const drawW = srcCanvas.width  * scale;
+                const drawH = srcCanvas.height * scale;
+                const offsetX = (w - drawW) / 2;
+                const offsetY = (h - drawH) / 2;
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(srcCanvas, offsetX, offsetY, drawW, drawH);
+            }
+
             const link = document.createElement('a');
             link.download = filename;
-            link.href = canvas.toDataURL('image/png');
+            link.href = finalCanvas.toDataURL('image/png');
             link.click();
         }
     </script>
 </body>
 </html>
-
