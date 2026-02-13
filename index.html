@@ -290,6 +290,9 @@
             colorPickersContainer.innerHTML = '';
             colorPickers = [];
 
+            // 預設顏色陣列：平(粉紅) 安(藍綠) 喜(橙) 樂(淺綠)
+            const defaultColors = ['#FF6B9D', '#4ECDC4', '#FFB347', '#95E1D3'];
+
             text.split('').forEach((char, index) => {
                 if (char === '\n') return;
 
@@ -303,7 +306,8 @@
                 const colorPicker = document.createElement('input');
                 colorPicker.type = 'color';
                 colorPicker.className = 'color-picker';
-                colorPicker.value = currentColors[index] || '#000000'; 
+                // 如果有舊顏色就用舊的，否則用預設顏色陣列（循環使用）
+                colorPicker.value = currentColors[index] || defaultColors[index % defaultColors.length]; 
                 
                 colorPicker.addEventListener('input', updateStyle);
 
@@ -553,4 +557,3 @@
     </script>
 </body>
 </html>
-
