@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="01.png">
-    <title>一個字一種顏色</title>
+    <title>一個字一種顏色 - 多行對齊版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* 載入自訂字型 */
@@ -94,11 +94,12 @@
             word-wrap: break-word;
             line-height: 1;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
+            text-align: center; /* 預設居中 */
         }
 
-        /* 尺寸預設按鈕 */
-        .preset-btn { transition: all 0.15s; }
-        .preset-btn.active-preset {
+        /* 尺寸預設按鈕與對齊按鈕 */
+        .preset-btn, .align-btn { transition: all 0.15s; }
+        .active-btn {
             border-color: #ea580c !important;
             background-color: #fff7ed !important;
             color: #c2410c !important;
@@ -167,17 +168,27 @@
                     </h2>
                     
                     <div class="space-y-6">
+                        <!-- 對齊方式 -->
+                        <div>
+                            <label class="block text-lg font-medium mb-2">文字對齊方式 (多行時有效):</label>
+                            <div class="flex gap-2">
+                                <button onclick="setAlign('left', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">靠左</button>
+                                <button onclick="setAlign('center', this)" class="align-btn active-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">居中</button>
+                                <button onclick="setAlign('right', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">靠右</button>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 gap-4">
                             <div>
-                                <label class="block text-lg font-medium mb-2">文字大小 (大/小): <span id="val-font-size" class="text-orange-600 font-bold">80</span></label>
+                                <label class="block text-lg font-medium mb-2">文字大小: <span id="val-font-size" class="text-orange-600 font-bold">80</span></label>
                                 <input type="range" id="font-size" min="20" max="200" value="80">
                             </div>
                             <div>
-                                <label class="block text-lg font-medium mb-2">文字間距 (寬/窄): <span id="val-letter-spacing" class="text-orange-600 font-bold">2</span></label>
+                                <label class="block text-lg font-medium mb-2">文字間距: <span id="val-letter-spacing" class="text-orange-600 font-bold">2</span></label>
                                 <input type="range" id="letter-spacing" min="0" max="50" value="2">
                             </div>
                             <div>
-                                <label class="block text-lg font-medium mb-2">行的高度 (高/低): <span id="val-line-height" class="text-orange-600 font-bold">1.2</span></label>
+                                <label class="block text-lg font-medium mb-2">行的高度: <span id="val-line-height" class="text-orange-600 font-bold">1.2</span></label>
                                 <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
                             </div>
                         </div>
@@ -217,7 +228,7 @@
                     <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
                         <label class="block text-lg font-bold mb-3 text-gray-700">📐 下載尺寸</label>
                         <div class="flex flex-wrap gap-2 mb-2">
-                            <button onclick="selectPreset(this,0,0)"    class="preset-btn active-preset px-3 py-1.5 rounded-lg border-2 border-orange-400 bg-orange-50 text-orange-700 font-bold text-sm">原圖大小</button>
+                            <button onclick="selectPreset(this,0,0)"    class="preset-btn active-btn px-3 py-1.5 rounded-lg border-2 border-orange-400 bg-orange-50 text-orange-700 font-bold text-sm">原圖大小</button>
                             <button onclick="selectPreset(this,370,320)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">370 × 320</button>
                             <button onclick="selectPreset(this,500,500)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">500 × 500</button>
                             <button onclick="selectPreset(this,800,600)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">800 × 600</button>
@@ -267,6 +278,7 @@
         const valBorderWidth = document.getElementById('val-border-width');
 
         let colorPickers = [];
+        let currentTextAlign = 'center';
 
         // 初始化
         textInput.addEventListener('input', handleTextInput);
@@ -280,6 +292,13 @@
             handleTextInput();
         };
 
+        function setAlign(align, btn) {
+            currentTextAlign = align;
+            document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active-btn'));
+            btn.classList.add('active-btn');
+            updateStyle();
+        }
+
         function handleTextInput() {
             const text = textInput.value;
             const currentColors = [];
@@ -290,7 +309,6 @@
             colorPickersContainer.innerHTML = '';
             colorPickers = [];
 
-            // 預設顏色陣列：平(粉紅) 安(藍綠) 喜(橙) 樂(淺綠)
             const defaultColors = ['#FF6B9D', '#4ECDC4', '#FFB347', '#95E1D3'];
 
             text.split('').forEach((char, index) => {
@@ -306,7 +324,6 @@
                 const colorPicker = document.createElement('input');
                 colorPicker.type = 'color';
                 colorPicker.className = 'color-picker';
-                // 如果有舊顏色就用舊的，否則用預設顏色陣列（循環使用）
                 colorPicker.value = currentColors[index] || defaultColors[index % defaultColors.length]; 
                 
                 colorPicker.addEventListener('input', updateStyle);
@@ -330,6 +347,7 @@
             textPreview.style.fontSize = `${fontSize.value}px`;
             textPreview.style.letterSpacing = `${letterSpacing.value}px`;
             textPreview.style.lineHeight = lineHeight.value;
+            textPreview.style.textAlign = currentTextAlign;
             textPreview.style.webkitTextStrokeWidth = `${borderWidth.value}px`;
             textPreview.style.webkitTextStrokeColor = borderColor.value;
             textPreview.style.textShadow = toggleShadow.checked ? '4px 4px 6px rgba(0,0,0,0.5)' : 'none';
@@ -337,10 +355,8 @@
             let pickerIndex = 0;
             const textHTML = textInput.value.split('').map((char) => {
                 if (char === '\n') return '<br>';
-                
                 const color = colorPickers[pickerIndex] ? colorPickers[pickerIndex].value : '#000000';
                 pickerIndex++;
-                
                 return `<span style="color: ${color};">${char}</span>`;
             }).join('');
 
@@ -365,7 +381,6 @@
             reader.readAsDataURL(file);
         }
 
-        // ─── 用 Canvas API 直接畫字，完全不依賴 html2canvas ───
         function renderToCanvas(bgColor) {
             const scale       = 2;
             const size        = parseInt(fontSize.value);
@@ -377,18 +392,13 @@
             const fontFamily  = textPreview.style.fontFamily || "'GenSenRounded', 'Microsoft JhengHei', sans-serif";
             const fontStr     = `${size}px ${fontFamily}`;
 
-            // 把輸入文字按行分割
             const lines = textInput.value.split('\n');
-
-            // ── 先用一個暫時的 canvas 來量測 ──
             const measure = document.createElement('canvas');
             const mCtx    = measure.getContext('2d');
             mCtx.font     = fontStr;
 
-            // 量每一行的寬度，取最寬者
             let maxW = 0;
             lines.forEach(line => {
-                // 每個字的寬度 + letter-spacing（最後一個字不加）
                 let lineW = 0;
                 for (let i = 0; i < line.length; i++) {
                     lineW += mCtx.measureText(line[i]).width;
@@ -399,25 +409,20 @@
 
             const lineH   = size * lh;
             const totalH  = lineH * lines.length;
-
-            // padding：stroke 兩邊各膨張, shadow 最多超出 offset+blur = 4+6=10
             const shadowPad = shadow ? 14 : 0;
-            const pad       = stroke + shadowPad + 12;   // 基本 margin 12px
+            const pad       = stroke + shadowPad + 12;
 
-            // ── 建正式 canvas ──
             const canvas  = document.createElement('canvas');
             canvas.width  = (maxW  + pad * 2) * scale;
             canvas.height = (totalH + pad * 2) * scale;
             const ctx     = canvas.getContext('2d');
             ctx.scale(scale, scale);
 
-            // 畫背景
             if (bgColor) {
                 ctx.fillStyle = bgColor;
                 ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
             }
 
-            // shadow 設定
             if (shadow) {
                 ctx.shadowColor   = 'rgba(0,0,0,0.5)';
                 ctx.shadowOffsetX = 4;
@@ -426,63 +431,63 @@
             }
 
             ctx.font        = fontStr;
-            ctx.textBaseline = 'middle';   // middle 讓上下自動對齊
+            ctx.textBaseline = 'middle';
 
-            // 收集每個字的顏色（跟 colorPickers 順序一致，跳過 \n）
-            const chars  = [];
             const colors = [];
             let pIdx = 0;
             textInput.value.split('').forEach(ch => {
-                if (ch === '\n') { chars.push('\n'); colors.push(null); return; }
-                chars.push(ch);
+                if (ch === '\n') { colors.push(null); return; }
                 colors.push(colorPickers[pIdx] ? colorPickers[pIdx].value : '#000000');
                 pIdx++;
             });
 
-            // ── 逐行逐字畫 ──
-            let charIdx = 0;
+            let globalCharIdx = 0;
             lines.forEach((line, lineIdx) => {
-                // 這一行的文字總寬（用來左右居中）
                 let lineW = 0;
                 for (let i = 0; i < line.length; i++) {
                     lineW += ctx.measureText(line[i]).width;
                     if (i < line.length - 1) lineW += spacing;
                 }
-                let x = pad + (maxW - lineW) / 2;   // 左右居中
-                const y = pad + lineH * lineIdx + lineH / 2;  // 上下居中於該行
+
+                // 根據對齊方式計算每行起始 X
+                let x = pad; 
+                if (currentTextAlign === 'center') {
+                    x = pad + (maxW - lineW) / 2;
+                } else if (currentTextAlign === 'right') {
+                    x = pad + (maxW - lineW);
+                }
+
+                const y = pad + lineH * lineIdx + lineH / 2;
 
                 for (let i = 0; i < line.length; i++) {
                     const ch    = line[i];
-                    const color = colors[charIdx] || '#000000';
+                    const color = colors[globalCharIdx] || '#000000';
                     const charW = ctx.measureText(ch).width;
 
-                    // 先畫 stroke（外框）
                     if (stroke > 0) {
                         ctx.strokeStyle  = strokeCol;
-                        ctx.lineWidth    = stroke * 2;  // stroke 向兩邊各膨張一半
+                        ctx.lineWidth    = stroke * 2;
                         ctx.lineJoin     = 'round';
                         ctx.strokeText(ch, x, y);
                     }
 
-                    // 畫本體
                     ctx.fillStyle = color;
                     ctx.fillText(ch, x, y);
 
                     x += charW + spacing;
-                    charIdx++;
+                    globalCharIdx++;
                 }
-                charIdx++; // 跳過 \n
+                globalCharIdx++; // 跳過 \n
             });
 
             return canvas;
         }
 
-        // ─── 尺寸選擇 ───
-        let downloadW = 0, downloadH = 0;   // 0 = 原圖大小
+        let downloadW = 0, downloadH = 0;
 
         function selectPreset(btn, w, h) {
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
-            btn.classList.add('active-preset');
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-btn'));
+            btn.classList.add('active-btn');
             const customRow = document.getElementById('custom-size-row');
             if (w === -1) {
                 customRow.classList.remove('hidden');
@@ -503,7 +508,6 @@
             return { w: downloadW, h: downloadH };
         }
 
-        // ─── 下載 ───
         function downloadPNG() {
             const canvas = renderToCanvas(null);
             saveCanvasAsImage(canvas, 'text_trans.png', null);
@@ -514,11 +518,6 @@
             saveCanvasAsImage(canvas, 'text_white.png', '#ffffff');
         }
 
-        /**
-         * 如果選了固定尺寸，建一張新 canvas（指定大小），
-         * 將原圖【等比例縮放】後居中貼入，多餘處填背景色（透明或白）。
-         * 這樣文字永遠不會變形。
-         */
         function saveCanvasAsImage(srcCanvas, filename, bgColor) {
             const { w, h } = getDownloadSize();
             let finalCanvas = srcCanvas;
@@ -529,12 +528,10 @@
                 finalCanvas.height = h;
                 const ctx = finalCanvas.getContext('2d');
 
-                // 先畫背景
                 if (bgColor) {
                     ctx.fillStyle = bgColor;
                     ctx.fillRect(0, 0, w, h);
                 }
-                // 等比縮放：取寬、高中較小的縮放比
                 const scaleX = w / srcCanvas.width;
                 const scaleY = h / srcCanvas.height;
                 const scale  = Math.min(scaleX, scaleY);
