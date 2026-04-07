@@ -16,10 +16,10 @@
 
         body {
             font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-            background-color: #fdf2f8; /* 極淺粉紅背景 */
+            background-color: #fdf2f8; 
         }
 
-        /* 大尺寸滑桿 - 改為柔和紫色調 */
+        /* 大尺寸滑桿 */
         input[type="range"] {
             height: 40px;
             -webkit-appearance: none;
@@ -31,7 +31,7 @@
             height: 32px;
             width: 32px;
             border-radius: 50%;
-            background: #d4a5d9; /* 柔紫色 */
+            background: #d4a5d9; 
             cursor: pointer;
             margin-top: -12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -76,7 +76,7 @@
         }
 
         .active-btn {
-            background-color: #be185d !important; /* 深玫瑰粉，不刺眼 */
+            background-color: #be185d !important; 
             color: white !important;
             border-color: #9d174d !important;
         }
@@ -92,12 +92,11 @@
         .big-label {
             font-size: 1.15rem;
             font-weight: 600;
-            color: #86198f; /* 柔和深紫文字 */
+            color: #86198f; 
             margin-bottom: 10px;
             display: block;
         }
 
-        /* 下拉選單樣式 */
         select {
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -118,10 +117,8 @@
     <div class="container mx-auto p-4 max-w-6xl">
         <div class="flex flex-col lg:flex-row gap-8">
             
-            <!-- 設定面板 -->
             <div class="w-full lg:w-1/2 space-y-6">
                 
-                <!-- 1: 輸入內容 -->
                 <div class="step-card">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <span class="bg-fuchsia-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
@@ -139,7 +136,6 @@
                     </div>
                 </div>
 
-                <!-- 2: 顏色模式 -->
                 <div class="step-card">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <span class="bg-fuchsia-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
@@ -159,7 +155,6 @@
                     </div>
                 </div>
 
-                <!-- 3: 字體與間距 -->
                 <div class="step-card">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <span class="bg-fuchsia-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
@@ -181,7 +176,6 @@
                     </div>
                 </div>
 
-                <!-- 4: 邊框 -->
                 <div class="step-card">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                         <span class="bg-fuchsia-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
@@ -202,7 +196,6 @@
                 </div>
             </div>
 
-            <!-- 預覽面板 -->
             <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
                 <div class="bg-white p-6 rounded-2xl shadow-xl border border-fuchsia-100">
                     <h2 class="text-2xl font-bold mb-4 text-center text-fuchsia-800">作品預覽</h2>
@@ -230,7 +223,7 @@
                                 <button onclick="generateImage(false)" class="py-4 bg-teal-500 hover:bg-teal-600 text-white text-lg font-bold rounded-xl shadow transition-all">
                                     下載透明背景
                                 </button>
-                               
+                                
                             </div>
                         </div>
                     </div>
@@ -238,7 +231,7 @@
                     <div class="mt-6 text-center">
                         <label class="cursor-pointer inline-flex items-center gap-2 text-fuchsia-600 font-medium hover:underline text-sm">
                             <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
-                            <span>📂 上傳字型</span>
+                            <span>📂 更換自定義字體檔案</span>
                         </label>
                     </div>
                 </div>
@@ -254,8 +247,9 @@
 
         let colorMode = 'multi';
         let textAlign = 'center';
+        // 預設外框粗細調整為 1，顏色為黑色
         let outlineLayers = [
-            { width: 4, color: '#4a044e' } // 改為深紫邊框
+            { width: 1, color: '#000000' }
         ];
 
         window.onload = () => {
@@ -289,8 +283,15 @@
             const currentColors = Array.from(document.querySelectorAll('.char-picker')).map(p => p.value);
             multiColorContainer.innerHTML = '';
             
-            // 調整為柔和蠟筆色調
-            const palette = ['#be185d', '#7e22ce', '#0369a1', '#047857', '#b45309', '#4338ca'];
+            // 更柔和的預設顏色 (粉蠟筆調)
+            const palette = [
+                '#f4a7b9', // 淡粉
+                '#8ed1e1', // 淡藍
+                '#a8d8b9', // 淡綠
+                '#fcd38a', // 淺橘
+                '#c0abde', // 淺紫
+                '#9ac1d9'  // 灰藍
+            ];
             let charIndex = 0;
 
             text.split('').forEach(char => {
@@ -388,7 +389,7 @@
             }
 
             if (shadowOn) {
-                shadowStyles.push(`5px 5px 12px rgba(0,0,0,0.15)`); // 陰影也調淡
+                shadowStyles.push(`5px 5px 12px rgba(0,0,0,0.15)`);
             }
             textPreview.style.textShadow = shadowStyles.join(', ');
 
@@ -520,7 +521,7 @@
             }
 
             const link = document.createElement('a');
-            link.download = `文字_${selectVal}_${whiteBg?'白底':'透明'}.png`;
+            link.download = `文字作品_${selectVal}_${whiteBg?'白底':'透明'}.png`;
             link.href = finalCanvas.toDataURL('image/png');
             link.click();
         }
