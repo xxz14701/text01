@@ -521,7 +521,7 @@
             }
 
             const link = document.createElement('a');
-            link.download = `文字作品_${selectVal}_${whiteBg?'白底':'透明'}.png`;
+            link.download = `文字_${selectVal}_${whiteBg?'白底':'透明'}.png`;
             link.href = finalCanvas.toDataURL('image/png');
             link.click();
         }
