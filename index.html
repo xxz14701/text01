@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="01.png">
-    <title>銀髮族專用 - 好字好色製作工具</title>
+    <title>一個文字一種顏色</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @font-face {
@@ -16,55 +16,55 @@
 
         body {
             font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-            background-color: #fef2f2; /* 更柔和的底色 */
+            background-color: #fef2f2;
         }
 
-        /* 超大滑桿優化，方便長輩手指操作 */
+        /* 大尺寸滑桿，方便操作 */
         input[type="range"] {
-            height: 45px;
+            height: 40px;
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 36px;
-            width: 36px;
+            height: 32px;
+            width: 32px;
             border-radius: 50%;
             background: #e11d48;
             cursor: pointer;
-            margin-top: -14px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            margin-top: -12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             border: 2px solid white;
         }
         input[type="range"]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 12px;
+            height: 10px;
             cursor: pointer;
             background: #fbcece;
-            border-radius: 6px;
+            border-radius: 5px;
         }
 
         /* 大尺寸選色器 */
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
             background: none;
             padding: 0;
         }
         input[type="color"]::-webkit-color-swatch {
-            border: 4px solid #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .preview-bg {
             background-color: white;
-            border: 4px solid #e11d48;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            border: 2px solid #fecdd3;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
         }
 
         #text-preview {
@@ -72,158 +72,155 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
-            font-weight: bold;
+            /* 移除強制粗體，讓視覺更舒服 */
+            font-weight: normal; 
         }
 
         .active-btn {
             background-color: #e11d48 !important;
             color: white !important;
             border-color: #be123c !important;
-            transform: scale(1.05);
         }
 
         .step-card {
             background: white;
             padding: 24px;
-            border-radius: 24px;
-            border: 2px solid #fecdd3;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            border: 1px solid #fecdd3;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .big-label {
-            font-size: 1.25rem;
-            font-weight: 800;
+            font-size: 1.15rem;
+            font-weight: 600;
             color: #9f1239;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: block;
         }
     </style>
 </head>
 <body class="text-gray-900 pb-20">
 
-    <header class="bg-rose-600 text-white p-8 text-center shadow-xl">
-        <h1 class="text-4xl md:text-5xl font-black mb-2">🍎 快樂寫好字 🍎</h1>
-        <p class="text-xl opacity-90 font-bold">字體大、顏色美、操作最簡單</p>
+    <header class="bg-rose-600 text-white p-6 text-center shadow-md">
+        <h1 class="text-3xl font-bold mb-1">🍎 一個文字一種顏色 🍎</h1>
+        <p class="text-lg opacity-90">Billy ^.^ | Program improved by AI @2026</p>
     </header>
 
     <div class="container mx-auto p-4 max-w-6xl">
         <div class="flex flex-col lg:flex-row gap-8">
             
-            <!-- 左側設定：大字、大圖、好點擊 -->
-            <div class="w-full lg:w-1/2 space-y-8">
+            <!-- 設定面板 -->
+            <div class="w-full lg:w-1/2 space-y-6">
                 
-                <!-- 1: 寫字 -->
+                <!-- 1: 輸入內容 -->
                 <div class="step-card">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">1</span>
-                        第一步：寫下您的心願
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                        步驟一：輸入內容
                     </h2>
-                    <textarea id="text-input" rows="2" class="w-full p-5 text-2xl border-4 border-gray-200 rounded-2xl focus:border-rose-500 outline-none transition-all" placeholder="請在此輸入文字...">平安喜樂</textarea>
+                    <textarea id="text-input" rows="2" class="w-full p-4 text-xl border-2 border-gray-200 rounded-xl focus:border-rose-400 outline-none" placeholder="請輸入文字...">平安喜樂</textarea>
                     
-                    <div class="mt-6">
-                        <span class="big-label">文字要擺在哪裡？</span>
-                        <div class="flex gap-4">
-                            <button onclick="setAlign('left', this)" class="align-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">靠左邊</button>
-                            <button onclick="setAlign('center', this)" class="align-btn active-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">擺中間</button>
-                            <button onclick="setAlign('right', this)" class="align-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">靠右邊</button>
+                    <div class="mt-4">
+                        <span class="big-label">文字對齊方式</span>
+                        <div class="flex gap-3">
+                            <button onclick="setAlign('left', this)" class="align-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">靠左</button>
+                            <button onclick="setAlign('center', this)" class="align-btn active-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">置中</button>
+                            <button onclick="setAlign('right', this)" class="align-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">靠右</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2: 顏色 -->
+                <!-- 2: 顏色模式 -->
                 <div class="step-card">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">2</span>
-                        第二步：選個漂亮的顏色
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                        步驟二：選擇顏色模式
                     </h2>
-                    <div class="flex gap-4 mb-6">
-                        <button id="mode-multi" onclick="setColorMode('multi')" class="mode-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold active-btn">每個字不同色</button>
-                        <button id="mode-single" onclick="setColorMode('single')" class="mode-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">全部同一個色</button>
+                    <div class="flex gap-3 mb-6">
+                        <button id="mode-multi" onclick="setColorMode('multi')" class="mode-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium active-btn">每個字不同顏色</button>
+                        <button id="mode-single" onclick="setColorMode('single')" class="mode-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">全部統一顏色</button>
                     </div>
 
-                    <div id="single-color-ctrl" class="hidden flex flex-col items-center gap-3 p-6 bg-rose-50 rounded-2xl border-2 border-rose-100">
-                        <span class="text-xl font-bold">點擊下方圓圈選顏色：</span>
+                    <div id="single-color-ctrl" class="hidden flex flex-col items-center gap-2 p-4 bg-rose-50 rounded-xl border border-rose-100">
+                        <span class="text-lg font-medium">選擇主文字顏色：</span>
                         <input type="color" id="single-text-color" value="#e11d48" oninput="updateStyle()">
                     </div>
 
-                    <div id="multi-color-container" class="max-h-60 overflow-y-auto p-4 bg-gray-50 rounded-2xl flex flex-wrap gap-4 justify-center">
+                    <div id="multi-color-container" class="max-h-52 overflow-y-auto p-4 bg-gray-50 rounded-xl flex flex-wrap gap-4 justify-center">
                         <!-- 動態生成選色器 -->
                     </div>
                 </div>
 
-                <!-- 3: 樣子 -->
+                <!-- 3: 字體與間距 -->
                 <div class="step-card">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">3</span>
-                        第三步：調整字的大小與間隔
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
+                        步驟三：調整文字樣式
                     </h2>
-                    <div class="space-y-8">
+                    <div class="space-y-6">
                         <div>
-                            <label class="big-label">字體大小：<span id="val-font-size" class="text-rose-600">80</span></label>
-                            <input type="range" id="font-size" min="40" max="300" value="80">
+                            <label class="big-label">字體大小：<span id="val-font-size" class="text-rose-600">80</span> px</label>
+                            <input type="range" id="font-size" min="30" max="250" value="80">
                         </div>
                         <div>
-                            <label class="big-label">上下排的距離：<span id="val-line-height" class="text-rose-600">1.2</span></label>
-                            <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
+                            <label class="big-label">行距 (上下排距離)：<span id="val-line-height" class="text-rose-600">1.2</span></label>
+                            <input type="range" id="line-height" min="0.5" max="2.5" step="0.1" value="1.2">
                         </div>
                         <div>
-                            <label class="big-label">左右字的距離：<span id="val-letter-spacing" class="text-rose-600">2</span></label>
-                            <input type="range" id="letter-spacing" min="-5" max="100" value="2">
+                            <label class="big-label">字距 (左右字間隔)：<span id="val-letter-spacing" class="text-rose-600">2</span> px</label>
+                            <input type="range" id="letter-spacing" min="-5" max="80" value="2">
                         </div>
                     </div>
                 </div>
 
-                <!-- 4: 邊框層次 -->
+                <!-- 4: 邊框 -->
                 <div class="step-card">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-black flex items-center gap-2">
-                            <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">4</span>
-                            第四步：幫文字穿衣服 (邊框)
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
+                            步驟四：設定文字邊框
                         </h2>
                     </div>
-                    <div id="outline-layers-list" class="space-y-4">
-                        <!-- 動態邊框 -->
+                    <div id="outline-layers-list" class="space-y-1">
+                        <!-- 動態邊框清單 -->
                     </div>
-                    <button onclick="addOutlineLayer()" class="mt-4 w-full py-4 bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold rounded-2xl shadow-lg transition-all">
-                        ✨ 多加一層邊框 ✨
+                    <button onclick="addOutlineLayer()" class="mt-4 w-full py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-bold rounded-xl shadow transition-all">
+                        + 新增一層邊框
                     </button>
                     
-                    <div class="mt-6 p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-200">
-                        <label class="flex items-center gap-4 cursor-pointer">
-                            <input type="checkbox" id="toggle-shadow" class="w-8 h-8 rounded-lg">
-                            <span class="text-xl font-bold">增加立體陰影 (看起來更清楚)</span>
+                    <div class="mt-6 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6">
+                            <span class="text-lg font-medium">增加立體陰影</span>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- 右側預覽：超大預覽區域 -->
+            <!-- 預覽面板 -->
             <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
-                <div class="bg-white p-6 rounded-3xl shadow-2xl border-4 border-gray-100">
-                    <h2 class="text-3xl font-black mb-6 text-center text-rose-800">🖼️ 這是您的作品</h2>
-                    <div class="preview-bg rounded-2xl overflow-hidden flex justify-center items-center p-10 min-h-[450px]">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-center text-rose-800">作品預覽</h2>
+                    <div class="preview-bg rounded-xl overflow-hidden flex justify-center items-center p-8 min-h-[400px]">
                         <div id="text-preview"></div>
                     </div>
 
-                    <!-- 下載區：按鈕超大 -->
-                    <div class="mt-10 space-y-6">
-                        <div class="bg-gray-100 p-6 rounded-2xl">
-                            <span class="big-label">準備好要存起來了嗎？</span>
-                            <div class="grid grid-cols-1 gap-4">
-                                <button onclick="downloadPNG(false)" class="py-6 bg-green-600 hover:bg-green-700 text-white text-2xl font-black rounded-3xl shadow-xl transform active:scale-95 transition-all">
-                                    💾 存成透明圖片 (推薦)
+                    <div class="mt-8 space-y-4">
+                        <div class="bg-gray-50 p-5 rounded-xl">
+                            <span class="big-label text-center">下載製作好的圖片</span>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="downloadPNG(false)" class="py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow transition-all">
+                                    下載透明背景
                                 </button>
-                                <button onclick="downloadPNG(true)" class="py-6 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-black rounded-3xl shadow-xl transform active:scale-95 transition-all">
-                                    🖼️ 存成白色背景圖片
-                                </button>
+                                
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mt-8 text-center">
-                        <label class="cursor-pointer inline-flex items-center gap-2 text-rose-600 font-bold hover:underline">
+                    <div class="mt-6 text-center">
+                        <label class="cursor-pointer inline-flex items-center gap-2 text-rose-600 font-medium hover:underline text-sm">
                             <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
-                            <span>📂 如果您有喜歡的字體，請點這裡更換</span>
+                            <span>📂 上傳字型</span>
                         </label>
                     </div>
                 </div>
@@ -239,9 +236,9 @@
 
         let colorMode = 'multi';
         let textAlign = 'center';
+        // 預設邊框改為只有一層
         let outlineLayers = [
-            { width: 4, color: '#000000' }, // 第一層
-            { width: 8, color: '#ffffff' }  // 預設給長輩兩層，比較清楚
+            { width: 4, color: '#000000' }
         ];
 
         window.onload = () => {
@@ -281,9 +278,9 @@
             text.split('').forEach(char => {
                 if (char === '\n') return;
                 const div = document.createElement('div');
-                div.className = 'flex flex-col items-center bg-white p-3 rounded-2xl border-2 border-gray-100 shadow-sm';
+                div.className = 'flex flex-col items-center bg-white p-2 rounded-xl border border-gray-100 shadow-sm';
                 div.innerHTML = `
-                    <span class="text-xl font-black mb-2">${char}</span>
+                    <span class="text-lg font-medium mb-1">${char}</span>
                     <input type="color" class="char-picker" value="${currentColors[charIndex] || palette[charIndex % palette.length]}" oninput="updateStyle()">
                 `;
                 multiColorContainer.appendChild(div);
@@ -308,7 +305,7 @@
         }
 
         function addOutlineLayer() {
-            outlineLayers.push({ width: 6, color: '#ffffff' });
+            outlineLayers.push({ width: 5, color: '#ffffff' });
             renderOutlineControls();
             updateStyle();
         }
@@ -324,18 +321,18 @@
             outlineLayersList.innerHTML = '';
             outlineLayers.forEach((layer, index) => {
                 const div = document.createElement('div');
-                div.className = 'bg-rose-50 p-5 rounded-2xl border-2 border-rose-100 flex flex-wrap items-center gap-4';
+                div.className = 'bg-rose-50 p-4 rounded-xl border border-rose-100 flex flex-wrap items-center gap-4';
                 div.innerHTML = `
-                    <div class="flex items-center gap-3 min-w-[120px]">
-                        <span class="bg-rose-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">${index + 1}</span>
-                        <span class="font-bold text-lg text-rose-800">外圈顏色</span>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${index + 1}</span>
+                        <span class="font-medium text-rose-800">顏色</span>
+                        <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" class="shrink-0">
                     </div>
-                    <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" class="shrink-0">
-                    <div class="flex-1 min-w-[200px]">
-                        <span class="block text-sm font-bold text-rose-700 mb-1">邊界粗細</span>
-                        <input type="range" min="0" max="50" value="${layer.width}" oninput="updateLayer(${index}, 'width', this.value)" class="w-full">
+                    <div class="flex-1 min-w-[150px]">
+                        <span class="block text-xs font-bold text-rose-700 mb-1">粗細</span>
+                        <input type="range" min="0" max="40" value="${layer.width}" oninput="updateLayer(${index}, 'width', this.value)" class="w-full">
                     </div>
-                    ${index > 0 ? `<button onclick="removeOutlineLayer(${index})" class="bg-gray-200 text-gray-600 w-10 h-10 rounded-full font-bold text-xl">✕</button>` : '<div class="w-10"></div>'}
+                    ${index > 0 ? `<button onclick="removeOutlineLayer(${index})" class="text-red-500 font-bold px-2">✕</button>` : '<div class="w-6"></div>'}
                 `;
                 outlineLayersList.appendChild(div);
             });
@@ -373,7 +370,7 @@
             }
 
             if (shadowOn) {
-                shadowStyles.push(`10px 10px 20px rgba(0,0,0,0.4)`);
+                shadowStyles.push(`8px 8px 16px rgba(0,0,0,0.3)`);
             }
             textPreview.style.textShadow = shadowStyles.join(', ');
 
@@ -401,7 +398,7 @@
 
             const measure = document.createElement('canvas');
             const mCtx = measure.getContext('2d');
-            mCtx.font = `bold ${size}px ${fontFamily}`;
+            mCtx.font = `${size}px ${fontFamily}`;
             
             let maxW = 0;
             lines.forEach(l => {
@@ -412,7 +409,7 @@
 
             const totalH = size * lh * lines.length;
             const outlineTotalWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
-            const pad = outlineTotalWidth + (shadowOn ? 40 : 20);
+            const pad = outlineTotalWidth + (shadowOn ? 30 : 15);
 
             const canvas = document.createElement('canvas');
             const contentW = maxW + pad * 2;
@@ -428,7 +425,7 @@
                 ctx.fillRect(0, 0, contentW, contentH);
             }
 
-            ctx.font = `bold ${size}px ${fontFamily}`;
+            ctx.font = `${size}px ${fontFamily}`;
             ctx.textBaseline = 'middle';
             ctx.lineJoin = 'round';
 
@@ -451,10 +448,10 @@
                     const charColor = colorMode === 'single' ? document.getElementById('single-text-color').value : (pickers[pIdx]?.value || '#000');
 
                     if (shadowOn) {
-                        ctx.shadowBlur = 20;
-                        ctx.shadowColor = "rgba(0,0,0,0.4)";
-                        ctx.shadowOffsetX = 10;
-                        ctx.shadowOffsetY = 10;
+                        ctx.shadowBlur = 16;
+                        ctx.shadowColor = "rgba(0,0,0,0.3)";
+                        ctx.shadowOffsetX = 8;
+                        ctx.shadowOffsetY = 8;
                         ctx.strokeText(char, currentX, y);
                     }
                     ctx.shadowColor = "transparent";
@@ -477,7 +474,7 @@
             });
 
             const link = document.createElement('a');
-            link.download = whiteBg ? '我的大字作品_白色背景.png' : '我的大字作品_透明背景.png';
+            link.download = whiteBg ? '文字作品_白色背景.png' : '文字作品_透明背景.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
