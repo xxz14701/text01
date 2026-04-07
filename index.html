@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="01.png">
-    <title>一個文字一種顏色</title>
+    <title>一個字一種顏色</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* 載入自訂字型 */
         @font-face {
             font-family: 'GenSenRounded';
             src: url('GenSenRounded2TW-H.otf') format('opentype');
@@ -16,213 +17,244 @@
 
         body {
             font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-            background-color: #fef2f2;
+            background-color: #f2d5f1;
         }
 
-        /* 大尺寸滑桿，方便操作 */
+        /* 滑桿優化 */
         input[type="range"] {
-            height: 40px;
+            height: 30px;
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 32px;
-            width: 32px;
+            height: 28px;
+            width: 28px;
             border-radius: 50%;
-            background: #e11d48;
+            background: #f63b99;
             cursor: pointer;
-            margin-top: -12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            border: 2px solid white;
+            margin-top: -10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         input[type="range"]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 10px;
+            height: 8px;
             cursor: pointer;
-            background: #fbcece;
-            border-radius: 5px;
+            background: #f2d5f1;
+            border-radius: 4px;
         }
 
-        /* 大尺寸選色器 */
+        /* 顏色選擇器 */
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
             width: 50px;
             height: 50px;
             cursor: pointer;
+            padding: 0;
             background: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
         input[type="color"]::-webkit-color-swatch {
             border: 3px solid #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
 
+        .color-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50px;
+        }
+        .color-char-label {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* 預覽區背景 */
         .preview-bg {
+            background-image: 
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             background-color: white;
-            border: 2px solid #fecdd3;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
         }
 
         #text-preview {
             display: inline-block;
             white-space: pre-wrap;
             word-wrap: break-word;
+            line-height: 1;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
-            /* 移除強制粗體，讓視覺更舒服 */
-            font-weight: normal; 
+            text-align: center; /* 預設居中 */
         }
 
+        /* 尺寸預設按鈕與對齊按鈕 */
+        .preset-btn, .align-btn { transition: all 0.15s; }
         .active-btn {
-            background-color: #e11d48 !important;
-            color: white !important;
-            border-color: #be123c !important;
-        }
-
-        .step-card {
-            background: white;
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid #fecdd3;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .big-label {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #9f1239;
-            margin-bottom: 10px;
-            display: block;
+            border-color: #ea580c !important;
+            background-color: #fff7ed !important;
+            color: #c2410c !important;
+            font-weight: 700 !important;
         }
     </style>
 </head>
-<body class="text-gray-900 pb-20">
+<body class="text-gray-800">
 
-    <header class="bg-rose-600 text-white p-6 text-center shadow-md">
-        <h1 class="text-3xl font-bold mb-1">🍎 一個文字一種顏色 🍎</h1>
-        <p class="text-lg opacity-90">Billy ^.^ | Program improved by AI @2026</p>
+    <!-- 標題區 -->
+    <header class="bg-pink-600 text-white p-6 text-center shadow-lg">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-wide">❤️一個字一種顏色❤️</h1>
+        <p class="text-lg mt-2 opacity-90">讓每個文字都擁有自己的色彩!</p>
     </header>
 
     <div class="container mx-auto p-4 max-w-6xl">
+        
         <div class="flex flex-col lg:flex-row gap-8">
             
-            <!-- 設定面板 -->
+            <!-- 左側:設定區 -->
             <div class="w-full lg:w-1/2 space-y-6">
                 
-                <!-- 1: 輸入內容 -->
-                <div class="step-card">
-                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-                        步驟一：輸入內容
+                <!-- 步驟 1: 輸入文字 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-orange-100">
+                    <h2 class="text-xl font-bold mb-4 text-orange-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">1️⃣</span> 輸入文字
                     </h2>
-                    <textarea id="text-input" rows="2" class="w-full p-4 text-xl border-2 border-gray-200 rounded-xl focus:border-rose-400 outline-none" placeholder="請輸入文字...">平安喜樂</textarea>
-                    
-                    <div class="mt-4">
-                        <span class="big-label">文字對齊方式</span>
-                        <div class="flex gap-3">
-                            <button onclick="setAlign('left', this)" class="align-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">靠左</button>
-                            <button onclick="setAlign('center', this)" class="align-btn active-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">置中</button>
-                            <button onclick="setAlign('right', this)" class="align-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">靠右</button>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-lg font-medium mb-2">請輸入文字:</label>
+                            <textarea id="text-input" rows="3" class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition" placeholder="例如:平安喜樂">平安喜樂</textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-lg font-medium mb-2">更換字型 (選填):</label>
+                            <label class="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-orange-400 transition bg-gray-50">
+                                <span class="text-gray-600 font-medium">📂 點此選擇電腦裡的字型檔案</span>
+                                <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
+                            </label>
+                            <p id="fontNameDisplay" class="text-sm text-green-600 mt-1 hidden">✅ 已載入字型</p>
+                            <p class="text-gray-600 text-sm mt-1">💡 預設使用「源泉圓體」字型</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2: 顏色模式 -->
-                <div class="step-card">
-                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-                        步驟二：選擇顏色模式
+                <!-- 步驟 2: 設定顏色 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-blue-100">
+                    <h2 class="text-xl font-bold mb-4 text-blue-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">2️⃣</span> 點擊圓圈改顏色
                     </h2>
-                    <div class="flex gap-3 mb-6">
-                        <button id="mode-multi" onclick="setColorMode('multi')" class="mode-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium active-btn">每個字不同顏色</button>
-                        <button id="mode-single" onclick="setColorMode('single')" class="mode-btn flex-1 py-3 rounded-xl border-2 border-gray-200 font-medium">全部統一顏色</button>
-                    </div>
-
-                    <div id="single-color-ctrl" class="hidden flex flex-col items-center gap-2 p-4 bg-rose-50 rounded-xl border border-rose-100">
-                        <span class="text-lg font-medium">選擇主文字顏色：</span>
-                        <input type="color" id="single-text-color" value="#e11d48" oninput="updateStyle()">
-                    </div>
-
-                    <div id="multi-color-container" class="max-h-52 overflow-y-auto p-4 bg-gray-50 rounded-xl flex flex-wrap gap-4 justify-center">
-                        <!-- 動態生成選色器 -->
+                    
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 min-h-[100px]">
+                            <div id="color-pickers-container" class="flex flex-wrap justify-start gap-3">
+                                <!-- 這裡會自動產生顏色選擇器 -->
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm">💡 小提示:上方的圓圈對應您輸入的每一個字。</p>
                     </div>
                 </div>
 
-                <!-- 3: 字體與間距 -->
-                <div class="step-card">
-                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                        <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-                        步驟三：調整文字樣式
+                <!-- 步驟 3: 調整樣式 -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-purple-100">
+                    <h2 class="text-xl font-bold mb-4 text-purple-700 border-b pb-2 flex items-center">
+                        <span class="text-2xl mr-2">3️⃣</span> 調整大小與樣式
                     </h2>
+                    
                     <div class="space-y-6">
+                        <!-- 對齊方式 -->
                         <div>
-                            <label class="big-label">字體大小：<span id="val-font-size" class="text-rose-600">80</span> px</label>
-                            <input type="range" id="font-size" min="30" max="250" value="80">
+                            <label class="block text-lg font-medium mb-2">文字對齊方式 (多行時有效):</label>
+                            <div class="flex gap-2">
+                                <button onclick="setAlign('left', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">靠左</button>
+                                <button onclick="setAlign('center', this)" class="align-btn active-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">居中</button>
+                                <button onclick="setAlign('right', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium">靠右</button>
+                            </div>
                         </div>
-                        <div>
-                            <label class="big-label">行距 (上下排距離)：<span id="val-line-height" class="text-rose-600">1.2</span></label>
-                            <input type="range" id="line-height" min="0.5" max="2.5" step="0.1" value="1.2">
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字大小: <span id="val-font-size" class="text-orange-600 font-bold">80</span></label>
+                                <input type="range" id="font-size" min="20" max="200" value="80">
+                            </div>
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字間距: <span id="val-letter-spacing" class="text-orange-600 font-bold">2</span></label>
+                                <input type="range" id="letter-spacing" min="0" max="50" value="2">
+                            </div>
+                            <div>
+                                <label class="block text-lg font-medium mb-2">行的高度: <span id="val-line-height" class="text-orange-600 font-bold">1.2</span></label>
+                                <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
+                            </div>
                         </div>
-                        <div>
-                            <label class="big-label">字距 (左右字間隔)：<span id="val-letter-spacing" class="text-rose-600">2</span> px</label>
-                            <input type="range" id="letter-spacing" min="-5" max="80" value="2">
+
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-4">
+                            <div>
+                                <label class="block text-lg font-medium mb-2">文字外框粗細: <span id="val-border-width" class="text-orange-600 font-bold">2</span></label>
+                                <input type="range" id="border-width" min="0" max="20" value="1">
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <label class="text-lg font-medium">外框顏色:</label>
+                                <input type="color" id="border-color" value="#000000" class="h-12 w-20 rounded cursor-pointer border-2 border-gray-300">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 p-3 rounded-xl border border-gray-200">
+                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6 text-orange-600 rounded focus:ring-orange-500 border-gray-300 cursor-pointer">
+                            <label for="toggle-shadow" class="text-lg font-bold cursor-pointer select-none">開啟文字陰影 (立體感)</label>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4: 邊框 -->
-                <div class="step-card">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold flex items-center gap-2">
-                            <span class="bg-rose-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
-                            步驟四：設定文字邊框
-                        </h2>
-                    </div>
-                    <div id="outline-layers-list" class="space-y-1">
-                        <!-- 動態邊框清單 -->
-                    </div>
-                    <button onclick="addOutlineLayer()" class="mt-4 w-full py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-bold rounded-xl shadow transition-all">
-                        + 新增一層邊框
-                    </button>
-                    
-                    <div class="mt-6 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6">
-                            <span class="text-lg font-medium">增加立體陰影</span>
-                        </label>
-                    </div>
-                </div>
             </div>
 
-            <!-- 預覽面板 -->
+            <!-- 右側:預覽與下載 -->
             <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
-                <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-                    <h2 class="text-2xl font-bold mb-4 text-center text-rose-800">作品預覽</h2>
-                    <div class="preview-bg rounded-xl overflow-hidden flex justify-center items-center p-8 min-h-[400px]">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+                        👀 成果預覽
+                    </h2>
+                    
+                    <div class="preview-bg rounded-xl overflow-hidden border-2 border-gray-300 mb-6 flex justify-center items-center p-8 min-h-[300px]">
                         <div id="text-preview"></div>
                     </div>
 
-                    <div class="mt-8 space-y-4">
-                        <div class="bg-gray-50 p-5 rounded-xl">
-                            <span class="big-label text-center">下載製作好的圖片</span>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button onclick="downloadPNG(false)" class="py-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold rounded-xl shadow transition-all">
-                                    下載透明背景
-                                </button>
-                                
-                            </div>
+                    <!-- 下載尺寸選擇 -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
+                        <label class="block text-lg font-bold mb-3 text-gray-700">📐 下載尺寸</label>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <button onclick="selectPreset(this,0,0)"    class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">原圖大小</button>
+                            <button id="default-preset-btn" onclick="selectPreset(this,370,320)" class="preset-btn active-btn px-3 py-1.5 rounded-lg border-2 border-orange-400 bg-orange-50 text-orange-700 font-bold text-sm">370 × 320</button>
+                            <button onclick="selectPreset(this,500,500)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">500 × 500</button>
+                            <button onclick="selectPreset(this,800,600)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">800 × 600</button>
+                            <button onclick="selectPreset(this,1080,1080)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">1080 × 1080</button>
+                            <button onclick="selectPreset(this,-1,-1)"  class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-medium text-sm">自定義</button>
+                        </div>
+                        <div id="custom-size-row" class="flex items-center gap-2 hidden mt-2">
+                            <input type="number" id="custom-w" min="50" max="4000" value="370" class="w-20 border-2 border-gray-300 rounded-lg px-2 py-1 text-center text-lg font-bold focus:border-orange-400 outline-none">
+                            <span class="text-lg font-bold text-gray-500">×</span>
+                            <input type="number" id="custom-h" min="50" max="4000" value="320" class="w-20 border-2 border-gray-300 rounded-lg px-2 py-1 text-center text-lg font-bold focus:border-orange-400 outline-none">
+                            <span class="text-sm text-gray-500 ml-1">px</span>
                         </div>
                     </div>
-                    
-                    <div class="mt-6 text-center">
-                        <label class="cursor-pointer inline-flex items-center gap-2 text-rose-600 font-medium hover:underline text-sm">
-                            <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
-                            <span>📂 上傳字型</span>
-                        </label>
+
+                    <div class="space-y-3">
+                        <button onclick="downloadPNG()" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white text-xl font-bold rounded-xl shadow-lg transform transition active:scale-95">
+                            ⬇️ 下載圖片 (背景透明)
+                        </button>
+                        <button onclick="downloadPNGWithBackground()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold rounded-xl shadow-lg transform transition active:scale-95">
+                            ⬇️ 下載圖片 (白色背景)
+                        </button>
                     </div>
+
+                    <p class="text-center text-gray-500 mt-4 text-sm">
+                        Billy ^.^ | Program improved by AI @2026
+                    </p>
                 </div>
             </div>
         </div>
@@ -230,252 +262,300 @@
 
     <script>
         const textInput = document.getElementById('text-input');
+        const fontUpload = document.getElementById('font-upload');
+        const fontSize = document.getElementById('font-size');
+        const letterSpacing = document.getElementById('letter-spacing');
+        const lineHeight = document.getElementById('line-height');
+        const borderWidth = document.getElementById('border-width');
+        const borderColor = document.getElementById('border-color');
+        const toggleShadow = document.getElementById('toggle-shadow');
         const textPreview = document.getElementById('text-preview');
-        const outlineLayersList = document.getElementById('outline-layers-list');
-        const multiColorContainer = document.getElementById('multi-color-container');
+        const colorPickersContainer = document.getElementById('color-pickers-container');
+        
+        const valFontSize = document.getElementById('val-font-size');
+        const valLetterSpacing = document.getElementById('val-letter-spacing');
+        const valLineHeight = document.getElementById('val-line-height');
+        const valBorderWidth = document.getElementById('val-border-width');
 
-        let colorMode = 'multi';
-        let textAlign = 'center';
-        // 預設邊框改為只有一層
-        let outlineLayers = [
-            { width: 4, color: '#000000' }
-        ];
+        let colorPickers = [];
+        let currentTextAlign = 'center';
+        // 預設下載尺寸設為 370x320
+        let downloadW = 370, downloadH = 320;
 
-        window.onload = () => {
-            renderOutlineControls();
+        // 初始化
+        textInput.addEventListener('input', handleTextInput);
+        fontUpload.addEventListener('change', updateFont);
+        
+        [fontSize, letterSpacing, lineHeight, borderWidth, borderColor, toggleShadow].forEach(el => {
+            el.addEventListener('input', updateStyle);
+        });
+
+        window.onload = function() {
             handleTextInput();
-            updateStyle();
         };
 
-        textInput.addEventListener('input', handleTextInput);
-        ['font-size', 'line-height', 'letter-spacing', 'toggle-shadow', 'single-text-color'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateStyle);
-        });
-
-        document.getElementById('font-upload').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const font = new FontFace('userFont', `url(${event.target.result})`);
-                font.load().then(f => {
-                    document.fonts.add(f);
-                    textPreview.style.fontFamily = 'userFont';
-                    updateStyle();
-                });
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function handleTextInput() {
-            const text = textInput.value;
-            const currentColors = Array.from(document.querySelectorAll('.char-picker')).map(p => p.value);
-            multiColorContainer.innerHTML = '';
-            
-            const palette = ['#e11d48', '#2563eb', '#059669', '#d97706', '#7c3aed', '#db2777'];
-            let charIndex = 0;
-
-            text.split('').forEach(char => {
-                if (char === '\n') return;
-                const div = document.createElement('div');
-                div.className = 'flex flex-col items-center bg-white p-2 rounded-xl border border-gray-100 shadow-sm';
-                div.innerHTML = `
-                    <span class="text-lg font-medium mb-1">${char}</span>
-                    <input type="color" class="char-picker" value="${currentColors[charIndex] || palette[charIndex % palette.length]}" oninput="updateStyle()">
-                `;
-                multiColorContainer.appendChild(div);
-                charIndex++;
-            });
-            updateStyle();
-        }
-
-        function setColorMode(mode) {
-            colorMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active-btn', b.id === `mode-${mode}`));
-            document.getElementById('single-color-ctrl').classList.toggle('hidden', mode !== 'single');
-            document.getElementById('multi-color-container').classList.toggle('hidden', mode !== 'multi');
-            updateStyle();
-        }
-
         function setAlign(align, btn) {
-            textAlign = align;
+            currentTextAlign = align;
             document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active-btn'));
             btn.classList.add('active-btn');
             updateStyle();
         }
 
-        function addOutlineLayer() {
-            outlineLayers.push({ width: 5, color: '#ffffff' });
-            renderOutlineControls();
-            updateStyle();
-        }
+        function handleTextInput() {
+            const text = textInput.value;
+            const currentColors = [];
+            
+            const existingPickers = document.querySelectorAll('.color-picker');
+            existingPickers.forEach(picker => currentColors.push(picker.value));
 
-        function removeOutlineLayer(index) {
-            if (outlineLayers.length <= 1) return;
-            outlineLayers.splice(index, 1);
-            renderOutlineControls();
-            updateStyle();
-        }
+            colorPickersContainer.innerHTML = '';
+            colorPickers = [];
 
-        function renderOutlineControls() {
-            outlineLayersList.innerHTML = '';
-            outlineLayers.forEach((layer, index) => {
-                const div = document.createElement('div');
-                div.className = 'bg-rose-50 p-4 rounded-xl border border-rose-100 flex flex-wrap items-center gap-4';
-                div.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${index + 1}</span>
-                        <span class="font-medium text-rose-800">顏色</span>
-                        <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" class="shrink-0">
-                    </div>
-                    <div class="flex-1 min-w-[150px]">
-                        <span class="block text-xs font-bold text-rose-700 mb-1">粗細</span>
-                        <input type="range" min="0" max="40" value="${layer.width}" oninput="updateLayer(${index}, 'width', this.value)" class="w-full">
-                    </div>
-                    ${index > 0 ? `<button onclick="removeOutlineLayer(${index})" class="text-red-500 font-bold px-2">✕</button>` : '<div class="w-6"></div>'}
-                `;
-                outlineLayersList.appendChild(div);
+            const defaultColors = ['#FF6B9D', '#4ECDC4', '#FFB347', '#95E1D3'];
+
+            text.split('').forEach((char, index) => {
+                if (char === '\n') return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'color-wrapper';
+
+                const label = document.createElement('span');
+                label.className = 'color-char-label';
+                label.textContent = char;
+
+                const colorPicker = document.createElement('input');
+                colorPicker.type = 'color';
+                colorPicker.className = 'color-picker';
+                colorPicker.value = currentColors[index] || defaultColors[index % defaultColors.length]; 
+                
+                colorPicker.addEventListener('input', updateStyle);
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(colorPicker);
+                colorPickersContainer.appendChild(wrapper);
+                
+                colorPickers.push(colorPicker);
             });
-        }
 
-        function updateLayer(index, key, val) {
-            outlineLayers[index][key] = key === 'width' ? parseInt(val) : val;
             updateStyle();
         }
 
         function updateStyle() {
-            const size = document.getElementById('font-size').value;
-            const lh = document.getElementById('line-height').value;
-            const ls = document.getElementById('letter-spacing').value;
-            const shadowOn = document.getElementById('toggle-shadow').checked;
+            valFontSize.textContent = fontSize.value;
+            valLetterSpacing.textContent = letterSpacing.value;
+            valLineHeight.textContent = lineHeight.value;
+            valBorderWidth.textContent = borderWidth.value;
 
-            document.getElementById('val-font-size').textContent = size;
-            document.getElementById('val-line-height').textContent = lh;
-            document.getElementById('val-letter-spacing').textContent = ls;
+            textPreview.style.fontSize = `${fontSize.value}px`;
+            textPreview.style.letterSpacing = `${letterSpacing.value}px`;
+            textPreview.style.lineHeight = lineHeight.value;
+            textPreview.style.textAlign = currentTextAlign;
+            textPreview.style.webkitTextStrokeWidth = `${borderWidth.value}px`;
+            textPreview.style.webkitTextStrokeColor = borderColor.value;
+            textPreview.style.textShadow = toggleShadow.checked ? '4px 4px 6px rgba(0,0,0,0.5)' : 'none';
 
-            textPreview.style.fontSize = `${size}px`;
-            textPreview.style.lineHeight = lh;
-            textPreview.style.letterSpacing = `${ls}px`;
-            textPreview.style.textAlign = textAlign;
-
-            let shadowStyles = [];
-            textPreview.style.webkitTextStroke = `${outlineLayers[0].width}px ${outlineLayers[0].color}`;
-            
-            let currentFullWidth = outlineLayers[0].width;
-            for(let i = 1; i < outlineLayers.length; i++) {
-                currentFullWidth += outlineLayers[i].width;
-                const c = outlineLayers[i].color;
-                const w = currentFullWidth;
-                shadowStyles.push(`${w}px 0 0 ${c}, -${w}px 0 0 ${c}, 0 ${w}px 0 ${c}, 0 -${w}px 0 ${c}`);
-            }
-
-            if (shadowOn) {
-                shadowStyles.push(`8px 8px 16px rgba(0,0,0,0.3)`);
-            }
-            textPreview.style.textShadow = shadowStyles.join(', ');
-
-            const pickers = document.querySelectorAll('.char-picker');
-            const singleColor = document.getElementById('single-text-color').value;
-            let charCount = 0;
-
-            textPreview.innerHTML = textInput.value.split('').map(ch => {
-                if (ch === '\n') return '<br>';
-                const color = colorMode === 'single' ? singleColor : (pickers[charCount]?.value || '#000');
-                charCount++;
-                return `<span style="color: ${color}">${ch}</span>`;
+            let pickerIndex = 0;
+            const textHTML = textInput.value.split('').map((char) => {
+                if (char === '\n') return '<br>';
+                const color = colorPickers[pickerIndex] ? colorPickers[pickerIndex].value : '#000000';
+                pickerIndex++;
+                return `<span style="color: ${color};">${char}</span>`;
             }).join('');
+
+            textPreview.innerHTML = textHTML;
         }
 
-        function downloadPNG(whiteBg) {
-            const scale = 2; 
-            const size = parseInt(document.getElementById('font-size').value);
-            const lh = parseFloat(document.getElementById('line-height').value);
-            const ls = parseInt(document.getElementById('letter-spacing').value);
-            const shadowOn = document.getElementById('toggle-shadow').checked;
+        function updateFont(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('fontNameDisplay').classList.remove('hidden');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const font = new FontFace('customFont', `url(${e.target.result})`);
+                font.load().then(function(loadedFont) {
+                    document.fonts.add(loadedFont);
+                    textPreview.style.fontFamily = 'customFont';
+                }).catch(err => {
+                    alert('字型載入失敗,請確認檔案格式是否正確。');
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderToCanvas(bgColor) {
+            const scale       = 2;
+            const size        = parseInt(fontSize.value);
+            const spacing     = parseInt(letterSpacing.value);
+            const lh          = parseFloat(lineHeight.value);
+            const stroke      = parseInt(borderWidth.value) || 0;
+            const strokeCol   = borderColor.value;
+            const shadow      = toggleShadow.checked;
+            const fontFamily  = textPreview.style.fontFamily || "'GenSenRounded', 'Microsoft JhengHei', sans-serif";
+            const fontStr     = `${size}px ${fontFamily}`;
 
             const lines = textInput.value.split('\n');
-            const fontFamily = textPreview.style.fontFamily || "GenSenRounded, sans-serif";
-
             const measure = document.createElement('canvas');
-            const mCtx = measure.getContext('2d');
-            mCtx.font = `${size}px ${fontFamily}`;
-            
+            const mCtx    = measure.getContext('2d');
+            mCtx.font     = fontStr;
+
             let maxW = 0;
-            lines.forEach(l => {
-                let w = 0;
-                for(let char of l) w += mCtx.measureText(char).width + ls;
-                maxW = Math.max(maxW, w);
+            lines.forEach(line => {
+                let lineW = 0;
+                for (let i = 0; i < line.length; i++) {
+                    lineW += mCtx.measureText(line[i]).width;
+                    if (i < line.length - 1) lineW += spacing;
+                }
+                if (lineW > maxW) maxW = lineW;
             });
 
-            const totalH = size * lh * lines.length;
-            const outlineTotalWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
-            const pad = outlineTotalWidth + (shadowOn ? 30 : 15);
+            const lineH   = size * lh;
+            const totalH  = lineH * lines.length;
+            const shadowPad = shadow ? 14 : 0;
+            const pad       = stroke + shadowPad + 12;
 
-            const canvas = document.createElement('canvas');
-            const contentW = maxW + pad * 2;
-            const contentH = totalH + pad * 2;
-            
-            canvas.width = contentW * scale;
-            canvas.height = contentH * scale;
-            const ctx = canvas.getContext('2d');
+            const canvas  = document.createElement('canvas');
+            canvas.width  = (maxW  + pad * 2) * scale;
+            canvas.height = (totalH + pad * 2) * scale;
+            const ctx     = canvas.getContext('2d');
             ctx.scale(scale, scale);
 
-            if (whiteBg) {
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, contentW, contentH);
+            if (bgColor) {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
             }
 
-            ctx.font = `${size}px ${fontFamily}`;
+            if (shadow) {
+                ctx.shadowColor   = 'rgba(0,0,0,0.5)';
+                ctx.shadowOffsetX = 4;
+                ctx.shadowOffsetY = 4;
+                ctx.shadowBlur    = 6;
+            }
+
+            ctx.font        = fontStr;
             ctx.textBaseline = 'middle';
-            ctx.lineJoin = 'round';
 
-            const pickers = document.querySelectorAll('.char-picker');
+            const colors = [];
             let pIdx = 0;
-
-            lines.forEach((line, lineIdx) => {
-                let lineW = 0;
-                for(let char of line) lineW += ctx.measureText(char).width + ls;
-                
-                let startX = pad;
-                if (textAlign === 'center') startX = pad + (maxW - lineW) / 2;
-                if (textAlign === 'right') startX = pad + (maxW - lineW);
-                
-                const y = pad + (size * lh * lineIdx) + (size * lh / 2);
-
-                let currentX = startX;
-                for(let char of line) {
-                    const charW = ctx.measureText(char).width;
-                    const charColor = colorMode === 'single' ? document.getElementById('single-text-color').value : (pickers[pIdx]?.value || '#000');
-
-                    if (shadowOn) {
-                        ctx.shadowBlur = 16;
-                        ctx.shadowColor = "rgba(0,0,0,0.3)";
-                        ctx.shadowOffsetX = 8;
-                        ctx.shadowOffsetY = 8;
-                        ctx.strokeText(char, currentX, y);
-                    }
-                    ctx.shadowColor = "transparent";
-
-                    let runningWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
-                    for(let i = outlineLayers.length - 1; i >= 0; i--) {
-                        ctx.strokeStyle = outlineLayers[i].color;
-                        ctx.lineWidth = runningWidth * 2;
-                        ctx.strokeText(char, currentX, y);
-                        runningWidth -= outlineLayers[i].width;
-                    }
-
-                    ctx.fillStyle = charColor;
-                    ctx.fillText(char, currentX, y);
-
-                    currentX += charW + ls;
-                    pIdx++;
-                }
-                pIdx++; 
+            textInput.value.split('').forEach(ch => {
+                if (ch === '\n') { colors.push(null); return; }
+                colors.push(colorPickers[pIdx] ? colorPickers[pIdx].value : '#000000');
+                pIdx++;
             });
 
+            let globalCharIdx = 0;
+            lines.forEach((line, lineIdx) => {
+                let lineW = 0;
+                for (let i = 0; i < line.length; i++) {
+                    lineW += ctx.measureText(line[i]).width;
+                    if (i < line.length - 1) lineW += spacing;
+                }
+
+                // 根據對齊方式計算每行起始 X
+                let x = pad; 
+                if (currentTextAlign === 'center') {
+                    x = pad + (maxW - lineW) / 2;
+                } else if (currentTextAlign === 'right') {
+                    x = pad + (maxW - lineW);
+                }
+
+                const y = pad + lineH * lineIdx + lineH / 2;
+
+                for (let i = 0; i < line.length; i++) {
+                    const ch    = line[i];
+                    const color = colors[globalCharIdx] || '#000000';
+                    const charW = ctx.measureText(ch).width;
+
+                    if (stroke > 0) {
+                        ctx.strokeStyle  = strokeCol;
+                        ctx.lineWidth    = stroke * 2;
+                        ctx.lineJoin     = 'round';
+                        ctx.strokeText(ch, x, y);
+                    }
+
+                    ctx.fillStyle = color;
+                    ctx.fillText(ch, x, y);
+
+                    x += charW + spacing;
+                    globalCharIdx++;
+                }
+                globalCharIdx++; // 跳過 \n
+            });
+
+            return canvas;
+        }
+
+        function selectPreset(btn, w, h) {
+            document.querySelectorAll('.preset-btn').forEach(b => {
+                b.classList.remove('active-btn', 'border-orange-400', 'bg-orange-50', 'text-orange-700', 'font-bold');
+                b.classList.add('border-gray-300', 'bg-white', 'text-gray-600', 'font-medium');
+            });
+
+            btn.classList.remove('border-gray-300', 'bg-white', 'text-gray-600', 'font-medium');
+            btn.classList.add('active-btn', 'border-orange-400', 'bg-orange-50', 'text-orange-700', 'font-bold');
+
+            const customRow = document.getElementById('custom-size-row');
+            if (w === -1) {
+                customRow.classList.remove('hidden');
+                downloadW = -1; downloadH = -1;
+            } else {
+                customRow.classList.add('hidden');
+                downloadW = w; downloadH = h;
+            }
+        }
+
+        function getDownloadSize() {
+            if (downloadW === -1) {
+                return {
+                    w: Math.max(1, parseInt(document.getElementById('custom-w').value) || 370),
+                    h: Math.max(1, parseInt(document.getElementById('custom-h').value) || 320)
+                };
+            }
+            return { w: downloadW, h: downloadH };
+        }
+
+        function downloadPNG() {
+            const canvas = renderToCanvas(null);
+            saveCanvasAsImage(canvas, 'text_trans.png', null);
+        }
+
+        function downloadPNGWithBackground() {
+            const canvas = renderToCanvas('#ffffff');
+            saveCanvasAsImage(canvas, 'text_white.png', '#ffffff');
+        }
+
+        function saveCanvasAsImage(srcCanvas, filename, bgColor) {
+            const { w, h } = getDownloadSize();
+            let finalCanvas = srcCanvas;
+
+            // 只要不是「原圖大小」(0,0)，就執行縮放
+            if (w !== 0 && h !== 0) {
+                finalCanvas = document.createElement('canvas');
+                finalCanvas.width  = w;
+                finalCanvas.height = h;
+                const ctx = finalCanvas.getContext('2d');
+
+                if (bgColor) {
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, w, h);
+                }
+                const scaleX = w / srcCanvas.width;
+                const scaleY = h / srcCanvas.height;
+                const scale  = Math.min(scaleX, scaleY);
+
+                const drawW = srcCanvas.width  * scale;
+                const drawH = srcCanvas.height * scale;
+                const offsetX = (w - drawW) / 2;
+                const offsetY = (h - drawH) / 2;
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(srcCanvas, offsetX, offsetY, drawW, drawH);
+            }
+
             const link = document.createElement('a');
-            link.download = whiteBg ? '文字作品_白色背景.png' : '文字作品_透明背景.png';
-            link.href = canvas.toDataURL('image/png');
+            link.download = filename;
+            link.href = finalCanvas.toDataURL('image/png');
             link.click();
         }
     </script>
