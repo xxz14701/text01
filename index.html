@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="01.png">
-    <title>一個字一種顏色 - 進級版</title>
+    <title>銀髮族專用 - 好字好色製作工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 載入自訂字型 */
         @font-face {
             font-family: 'GenSenRounded';
             src: url('GenSenRounded2TW-H.otf') format('opentype');
@@ -17,237 +16,216 @@
 
         body {
             font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
-            background-color: #f2d5f1;
+            background-color: #fef2f2; /* 更柔和的底色 */
         }
 
-        /* 滑桿優化 */
+        /* 超大滑桿優化，方便長輩手指操作 */
         input[type="range"] {
-            height: 30px;
+            height: 45px;
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 28px;
-            width: 28px;
+            height: 36px;
+            width: 36px;
             border-radius: 50%;
-            background: #f63b99;
+            background: #e11d48;
             cursor: pointer;
-            margin-top: -10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            margin-top: -14px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 2px solid white;
         }
         input[type="range"]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 8px;
+            height: 12px;
             cursor: pointer;
-            background: #f2d5f1;
-            border-radius: 4px;
+            background: #fbcece;
+            border-radius: 6px;
         }
 
-        /* 顏色選擇器 */
+        /* 大尺寸選色器 */
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             cursor: pointer;
-            padding: 0;
             background: none;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
         input[type="color"]::-webkit-color-swatch {
-            border: 3px solid #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            border: 4px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        .color-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 50px;
-        }
-        .color-char-label {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        /* 預覽區背景 */
         .preview-bg {
-            background-image: 
-                linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
-                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
-                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             background-color: white;
+            border: 4px solid #e11d48;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
         }
 
         #text-preview {
             display: inline-block;
             white-space: pre-wrap;
             word-wrap: break-word;
-            line-height: 1;
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
-            text-align: center;
+            font-weight: bold;
         }
 
-        .preset-btn, .align-btn, .mode-btn { transition: all 0.15s; }
         .active-btn {
-            border-color: #ea580c !important;
-            background-color: #fff7ed !important;
-            color: #c2410c !important;
-            font-weight: 700 !important;
+            background-color: #e11d48 !important;
+            color: white !important;
+            border-color: #be123c !important;
+            transform: scale(1.05);
+        }
+
+        .step-card {
+            background: white;
+            padding: 24px;
+            border-radius: 24px;
+            border: 2px solid #fecdd3;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .big-label {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #9f1239;
+            margin-bottom: 12px;
+            display: block;
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-900 pb-20">
 
-    <header class="bg-pink-600 text-white p-6 text-center shadow-lg">
-        <h1 class="text-3xl md:text-4xl font-bold tracking-wide">❤️一個字一種顏色❤️</h1>
-        <p class="text-lg mt-2 opacity-90">新增多層外框與單一顏色模式!</p>
+    <header class="bg-rose-600 text-white p-8 text-center shadow-xl">
+        <h1 class="text-4xl md:text-5xl font-black mb-2">🍎 快樂寫好字 🍎</h1>
+        <p class="text-xl opacity-90 font-bold">字體大、顏色美、操作最簡單</p>
     </header>
 
     <div class="container mx-auto p-4 max-w-6xl">
         <div class="flex flex-col lg:flex-row gap-8">
             
-            <!-- 左側:設定區 -->
-            <div class="w-full lg:w-1/2 space-y-6">
+            <!-- 左側設定：大字、大圖、好點擊 -->
+            <div class="w-full lg:w-1/2 space-y-8">
                 
-                <!-- 1: 輸入文字 -->
-                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-orange-100">
-                    <h2 class="text-xl font-bold mb-4 text-orange-700 border-b pb-2 flex items-center">
-                        <span class="text-2xl mr-2">1️⃣</span> 輸入文字與字型
+                <!-- 1: 寫字 -->
+                <div class="step-card">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">1</span>
+                        第一步：寫下您的心願
                     </h2>
-                    <div class="space-y-4">
-                        <textarea id="text-input" rows="3" class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-orange-500 outline-none" placeholder="例如:平安喜樂">平安喜樂</textarea>
-                        
-                        <label class="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer hover:bg-gray-50 transition">
-                            <span class="text-gray-600 font-medium">📂 載入自訂字型 (.ttf/.otf)</span>
-                            <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 2: 色彩模式與顏色設定 -->
-                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-blue-100">
-                    <h2 class="text-xl font-bold mb-4 text-blue-700 border-b pb-2 flex items-center">
-                        <span class="text-2xl mr-2">2️⃣</span> 設定顏色模式
-                    </h2>
+                    <textarea id="text-input" rows="2" class="w-full p-5 text-2xl border-4 border-gray-200 rounded-2xl focus:border-rose-500 outline-none transition-all" placeholder="請在此輸入文字...">平安喜樂</textarea>
                     
-                    <div class="space-y-4">
-                        <div class="flex gap-2 mb-4">
-                            <button id="mode-multi" onclick="setColorMode('multi')" class="mode-btn flex-1 py-2 rounded-lg border-2 border-gray-300 bg-white font-medium active-btn">一字一色</button>
-                            <button id="mode-single" onclick="setColorMode('single')" class="mode-btn flex-1 py-2 rounded-lg border-2 border-gray-300 bg-white font-medium">單一顏色</button>
-                        </div>
-
-                        <div id="single-color-container" class="hidden bg-blue-50 p-4 rounded-xl border border-blue-200 flex items-center justify-center gap-4">
-                            <label class="font-bold">選擇文字顏色：</label>
-                            <input type="color" id="single-text-color" value="#FF6B9D" oninput="updateStyle()">
-                        </div>
-
-                        <div id="multi-color-container" class="bg-blue-50 p-4 rounded-xl border border-blue-200 min-h-[100px]">
-                            <div id="color-pickers-container" class="flex flex-wrap justify-start gap-3"></div>
+                    <div class="mt-6">
+                        <span class="big-label">文字要擺在哪裡？</span>
+                        <div class="flex gap-4">
+                            <button onclick="setAlign('left', this)" class="align-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">靠左邊</button>
+                            <button onclick="setAlign('center', this)" class="align-btn active-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">擺中間</button>
+                            <button onclick="setAlign('right', this)" class="align-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">靠右邊</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3: 調整樣式與外框 -->
-                <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-purple-100">
-                    <h2 class="text-xl font-bold mb-4 text-purple-700 border-b pb-2 flex items-center">
-                        <span class="text-2xl mr-2">3️⃣</span> 調整樣式與多層外框
+                <!-- 2: 顏色 -->
+                <div class="step-card">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">2</span>
+                        第二步：選個漂亮的顏色
                     </h2>
-                    
-                    <div class="space-y-6">
-                        <!-- 對齊方式 -->
+                    <div class="flex gap-4 mb-6">
+                        <button id="mode-multi" onclick="setColorMode('multi')" class="mode-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold active-btn">每個字不同色</button>
+                        <button id="mode-single" onclick="setColorMode('single')" class="mode-btn flex-1 py-4 text-xl rounded-2xl border-4 border-gray-200 font-bold">全部同一個色</button>
+                    </div>
+
+                    <div id="single-color-ctrl" class="hidden flex flex-col items-center gap-3 p-6 bg-rose-50 rounded-2xl border-2 border-rose-100">
+                        <span class="text-xl font-bold">點擊下方圓圈選顏色：</span>
+                        <input type="color" id="single-text-color" value="#e11d48" oninput="updateStyle()">
+                    </div>
+
+                    <div id="multi-color-container" class="max-h-60 overflow-y-auto p-4 bg-gray-50 rounded-2xl flex flex-wrap gap-4 justify-center">
+                        <!-- 動態生成選色器 -->
+                    </div>
+                </div>
+
+                <!-- 3: 樣子 -->
+                <div class="step-card">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">3</span>
+                        第三步：調整字的大小與間隔
+                    </h2>
+                    <div class="space-y-8">
                         <div>
-                            <label class="block text-lg font-medium mb-2">對齊方式:</label>
-                            <div class="flex gap-2">
-                                <button onclick="setAlign('left', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white">靠左</button>
-                                <button onclick="setAlign('center', this)" class="align-btn active-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white">居中</button>
-                                <button onclick="setAlign('right', this)" class="align-btn px-4 py-2 rounded-lg border-2 border-gray-300 bg-white">靠右</button>
-                            </div>
+                            <label class="big-label">字體大小：<span id="val-font-size" class="text-rose-600">80</span></label>
+                            <input type="range" id="font-size" min="40" max="300" value="80">
                         </div>
+                        <div>
+                            <label class="big-label">上下排的距離：<span id="val-line-height" class="text-rose-600">1.2</span></label>
+                            <input type="range" id="line-height" min="0.8" max="3" step="0.1" value="1.2">
+                        </div>
+                        <div>
+                            <label class="big-label">左右字的距離：<span id="val-letter-spacing" class="text-rose-600">2</span></label>
+                            <input type="range" id="letter-spacing" min="-5" max="100" value="2">
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-1">文字大小: <span id="val-font-size" class="text-purple-600">80</span></label>
-                                <input type="range" id="font-size" min="20" max="200" value="80">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1">文字間距: <span id="val-letter-spacing" class="text-purple-600">2</span></label>
-                                <input type="range" id="letter-spacing" min="0" max="50" value="2">
-                            </div>
-                        </div>
-
-                        <!-- 第一層外框 -->
-                        <div class="bg-gray-50 p-4 rounded-xl border-l-4 border-orange-400">
-                            <h3 class="font-bold mb-2">第一層外框</h3>
-                            <div class="flex items-center gap-4 mb-2">
-                                <input type="range" id="border-width" min="0" max="20" value="2" class="flex-1">
-                                <span id="val-border-width" class="w-8 font-bold">2</span>
-                                <input type="color" id="border-color" value="#000000">
-                            </div>
-                        </div>
-
-                        <!-- 第二層外框 -->
-                        <div class="bg-gray-50 p-4 rounded-xl border-l-4 border-blue-400">
-                            <h3 class="font-bold mb-2 flex justify-between">
-                                <span>第二層外框</span>
-                                <label class="text-sm font-normal"><input type="checkbox" id="enable-border2" checked> 啟用</label>
-                            </h3>
-                            <div class="flex items-center gap-4 mb-2">
-                                <input type="range" id="border-width2" min="0" max="30" value="8" class="flex-1">
-                                <span id="val-border-width2" class="w-8 font-bold">8</span>
-                                <input type="color" id="border-color2" value="#ffffff">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-3 p-3 rounded-xl border border-gray-200">
-                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6 rounded cursor-pointer">
-                            <label for="toggle-shadow" class="text-lg font-bold cursor-pointer">開啟陰影 (立體感)</label>
-                        </div>
+                <!-- 4: 邊框層次 -->
+                <div class="step-card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-black flex items-center gap-2">
+                            <span class="bg-rose-600 text-white w-10 h-10 rounded-full flex items-center justify-center">4</span>
+                            第四步：幫文字穿衣服 (邊框)
+                        </h2>
+                    </div>
+                    <div id="outline-layers-list" class="space-y-4">
+                        <!-- 動態邊框 -->
+                    </div>
+                    <button onclick="addOutlineLayer()" class="mt-4 w-full py-4 bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold rounded-2xl shadow-lg transition-all">
+                        ✨ 多加一層邊框 ✨
+                    </button>
+                    
+                    <div class="mt-6 p-4 bg-yellow-50 rounded-2xl border-2 border-yellow-200">
+                        <label class="flex items-center gap-4 cursor-pointer">
+                            <input type="checkbox" id="toggle-shadow" class="w-8 h-8 rounded-lg">
+                            <span class="text-xl font-bold">增加立體陰影 (看起來更清楚)</span>
+                        </label>
                     </div>
                 </div>
             </div>
 
-            <!-- 右側:預覽與下載 -->
+            <!-- 右側預覽：超大預覽區域 -->
             <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
-                <div class="bg-white p-6 rounded-2xl shadow-xl border-2 border-gray-200">
-                    <h2 class="text-2xl font-bold mb-4 text-center">👀 成果預覽</h2>
-                    
-                    <div class="preview-bg rounded-xl overflow-hidden border-2 border-gray-300 mb-6 flex justify-center items-center p-8 min-h-[300px]">
+                <div class="bg-white p-6 rounded-3xl shadow-2xl border-4 border-gray-100">
+                    <h2 class="text-3xl font-black mb-6 text-center text-rose-800">🖼️ 這是您的作品</h2>
+                    <div class="preview-bg rounded-2xl overflow-hidden flex justify-center items-center p-10 min-h-[450px]">
                         <div id="text-preview"></div>
                     </div>
 
-                    <!-- 下載控制 -->
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
-                        <label class="block text-lg font-bold mb-3">📐 下載尺寸</label>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <button onclick="selectPreset(this,0,0)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-sm">原圖</button>
-                            <button id="default-preset-btn" onclick="selectPreset(this,370,320)" class="preset-btn active-btn px-3 py-1.5 rounded-lg border-2 text-sm">370×320</button>
-                            <button onclick="selectPreset(this,500,500)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-sm">500×500</button>
-                            <button onclick="selectPreset(this,1080,1080)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-sm">IG貼文</button>
-                            <button onclick="selectPreset(this,-1,-1)" class="preset-btn px-3 py-1.5 rounded-lg border-2 border-gray-300 bg-white text-sm">自定義</button>
-                        </div>
-                        <div id="custom-size-row" class="hidden flex items-center gap-2">
-                            <input type="number" id="custom-w" value="370" class="w-20 border rounded p-1 text-center">
-                            <span>×</span>
-                            <input type="number" id="custom-h" value="320" class="w-20 border rounded p-1 text-center">
+                    <!-- 下載區：按鈕超大 -->
+                    <div class="mt-10 space-y-6">
+                        <div class="bg-gray-100 p-6 rounded-2xl">
+                            <span class="big-label">準備好要存起來了嗎？</span>
+                            <div class="grid grid-cols-1 gap-4">
+                                <button onclick="downloadPNG(false)" class="py-6 bg-green-600 hover:bg-green-700 text-white text-2xl font-black rounded-3xl shadow-xl transform active:scale-95 transition-all">
+                                    💾 存成透明圖片 (推薦)
+                                </button>
+                                <button onclick="downloadPNG(true)" class="py-6 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-black rounded-3xl shadow-xl transform active:scale-95 transition-all">
+                                    🖼️ 存成白色背景圖片
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="space-y-3">
-                        <button onclick="downloadPNG(false)" class="w-full py-4 bg-green-600 hover:bg-green-700 text-white text-xl font-bold rounded-xl shadow-lg transition transform active:scale-95">⬇️ 下載 (透明背景)</button>
-                        <button onclick="downloadPNG(true)" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold rounded-xl shadow-lg transition transform active:scale-95">⬇️ 下載 (白色背景)</button>
+                    
+                    <div class="mt-8 text-center">
+                        <label class="cursor-pointer inline-flex items-center gap-2 text-rose-600 font-bold hover:underline">
+                            <input type="file" id="font-upload" accept=".ttf,.otf" class="hidden">
+                            <span>📂 如果您有喜歡的字體，請點這裡更換</span>
+                        </label>
                     </div>
-
-                    <p class="text-center text-gray-500 mt-4 text-sm">Billy ^.^ | Enhanced with Multi-Outline & Single Color Mode</p>
                 </div>
             </div>
         </div>
@@ -255,290 +233,252 @@
 
     <script>
         const textInput = document.getElementById('text-input');
-        const fontUpload = document.getElementById('font-upload');
-        const fontSize = document.getElementById('font-size');
-        const letterSpacing = document.getElementById('letter-spacing');
-        const borderWidth = document.getElementById('border-width');
-        const borderColor = document.getElementById('border-color');
-        const borderWidth2 = document.getElementById('border-width2');
-        const borderColor2 = document.getElementById('border-color2');
-        const enableBorder2 = document.getElementById('enable-border2');
-        const toggleShadow = document.getElementById('toggle-shadow');
         const textPreview = document.getElementById('text-preview');
-        const colorPickersContainer = document.getElementById('color-pickers-container');
-        
-        const valFontSize = document.getElementById('val-font-size');
-        const valLetterSpacing = document.getElementById('val-letter-spacing');
-        const valBorderWidth = document.getElementById('val-border-width');
-        const valBorderWidth2 = document.getElementById('val-border-width2');
+        const outlineLayersList = document.getElementById('outline-layers-list');
+        const multiColorContainer = document.getElementById('multi-color-container');
 
-        let colorMode = 'multi'; // 'multi' or 'single'
-        let currentTextAlign = 'center';
-        let downloadW = 370, downloadH = 320;
+        let colorMode = 'multi';
+        let textAlign = 'center';
+        let outlineLayers = [
+            { width: 4, color: '#000000' }, // 第一層
+            { width: 8, color: '#ffffff' }  // 預設給長輩兩層，比較清楚
+        ];
 
-        // 初始化
+        window.onload = () => {
+            renderOutlineControls();
+            handleTextInput();
+            updateStyle();
+        };
+
         textInput.addEventListener('input', handleTextInput);
-        fontUpload.addEventListener('change', updateFont);
-        
-        [fontSize, letterSpacing, borderWidth, borderColor, borderWidth2, borderColor2, enableBorder2, toggleShadow].forEach(el => {
-            el.addEventListener('input', updateStyle);
+        ['font-size', 'line-height', 'letter-spacing', 'toggle-shadow', 'single-text-color'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateStyle);
         });
 
-        window.onload = handleTextInput;
+        document.getElementById('font-upload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const font = new FontFace('userFont', `url(${event.target.result})`);
+                font.load().then(f => {
+                    document.fonts.add(f);
+                    textPreview.style.fontFamily = 'userFont';
+                    updateStyle();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function handleTextInput() {
+            const text = textInput.value;
+            const currentColors = Array.from(document.querySelectorAll('.char-picker')).map(p => p.value);
+            multiColorContainer.innerHTML = '';
+            
+            const palette = ['#e11d48', '#2563eb', '#059669', '#d97706', '#7c3aed', '#db2777'];
+            let charIndex = 0;
+
+            text.split('').forEach(char => {
+                if (char === '\n') return;
+                const div = document.createElement('div');
+                div.className = 'flex flex-col items-center bg-white p-3 rounded-2xl border-2 border-gray-100 shadow-sm';
+                div.innerHTML = `
+                    <span class="text-xl font-black mb-2">${char}</span>
+                    <input type="color" class="char-picker" value="${currentColors[charIndex] || palette[charIndex % palette.length]}" oninput="updateStyle()">
+                `;
+                multiColorContainer.appendChild(div);
+                charIndex++;
+            });
+            updateStyle();
+        }
 
         function setColorMode(mode) {
             colorMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active-btn'));
-            document.getElementById(`mode-${mode}`).classList.add('active-btn');
-            
-            if (mode === 'single') {
-                document.getElementById('single-color-container').classList.remove('hidden');
-                document.getElementById('multi-color-container').classList.add('hidden');
-            } else {
-                document.getElementById('single-color-container').classList.add('hidden');
-                document.getElementById('multi-color-container').classList.remove('hidden');
-            }
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active-btn', b.id === `mode-${mode}`));
+            document.getElementById('single-color-ctrl').classList.toggle('hidden', mode !== 'single');
+            document.getElementById('multi-color-container').classList.toggle('hidden', mode !== 'multi');
             updateStyle();
         }
 
         function setAlign(align, btn) {
-            currentTextAlign = align;
+            textAlign = align;
             document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active-btn'));
             btn.classList.add('active-btn');
             updateStyle();
         }
 
-        function handleTextInput() {
-            const text = textInput.value;
-            const currentColors = Array.from(document.querySelectorAll('.color-picker')).map(p => p.value);
-            
-            colorPickersContainer.innerHTML = '';
-            const defaultColors = ['#FF6B9D', '#4ECDC4', '#FFB347', '#95E1D3'];
+        function addOutlineLayer() {
+            outlineLayers.push({ width: 6, color: '#ffffff' });
+            renderOutlineControls();
+            updateStyle();
+        }
 
-            text.split('').forEach((char, index) => {
-                if (char === '\n') return;
-                const wrapper = document.createElement('div');
-                wrapper.className = 'color-wrapper';
-                const label = document.createElement('span');
-                label.className = 'color-char-label';
-                label.textContent = char;
-                const cp = document.createElement('input');
-                cp.type = 'color';
-                cp.className = 'color-picker';
-                cp.value = currentColors[index] || defaultColors[index % defaultColors.length];
-                cp.addEventListener('input', updateStyle);
-                wrapper.appendChild(label);
-                wrapper.appendChild(cp);
-                colorPickersContainer.appendChild(wrapper);
+        function removeOutlineLayer(index) {
+            if (outlineLayers.length <= 1) return;
+            outlineLayers.splice(index, 1);
+            renderOutlineControls();
+            updateStyle();
+        }
+
+        function renderOutlineControls() {
+            outlineLayersList.innerHTML = '';
+            outlineLayers.forEach((layer, index) => {
+                const div = document.createElement('div');
+                div.className = 'bg-rose-50 p-5 rounded-2xl border-2 border-rose-100 flex flex-wrap items-center gap-4';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-[120px]">
+                        <span class="bg-rose-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">${index + 1}</span>
+                        <span class="font-bold text-lg text-rose-800">外圈顏色</span>
+                    </div>
+                    <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" class="shrink-0">
+                    <div class="flex-1 min-w-[200px]">
+                        <span class="block text-sm font-bold text-rose-700 mb-1">邊界粗細</span>
+                        <input type="range" min="0" max="50" value="${layer.width}" oninput="updateLayer(${index}, 'width', this.value)" class="w-full">
+                    </div>
+                    ${index > 0 ? `<button onclick="removeOutlineLayer(${index})" class="bg-gray-200 text-gray-600 w-10 h-10 rounded-full font-bold text-xl">✕</button>` : '<div class="w-10"></div>'}
+                `;
+                outlineLayersList.appendChild(div);
             });
+        }
+
+        function updateLayer(index, key, val) {
+            outlineLayers[index][key] = key === 'width' ? parseInt(val) : val;
             updateStyle();
         }
 
         function updateStyle() {
-            valFontSize.textContent = fontSize.value;
-            valLetterSpacing.textContent = letterSpacing.value;
-            valBorderWidth.textContent = borderWidth.value;
-            valBorderWidth2.textContent = borderWidth2.value;
+            const size = document.getElementById('font-size').value;
+            const lh = document.getElementById('line-height').value;
+            const ls = document.getElementById('letter-spacing').value;
+            const shadowOn = document.getElementById('toggle-shadow').checked;
 
-            textPreview.style.fontSize = `${fontSize.value}px`;
-            textPreview.style.letterSpacing = `${letterSpacing.value}px`;
-            textPreview.style.textAlign = currentTextAlign;
+            document.getElementById('val-font-size').textContent = size;
+            document.getElementById('val-line-height').textContent = lh;
+            document.getElementById('val-letter-spacing').textContent = ls;
 
-            // 預覽層次模擬：CSS webkit-text-stroke 只能畫一層，第二層用 text-shadow 擴散模擬
-            let shadowStr = '';
-            if (enableBorder2.checked && parseInt(borderWidth2.value) > 0) {
-                const b2w = parseInt(borderWidth2.value);
-                const b2c = borderColor2.value;
-                // 利用多個 shadow 模擬描邊
-                shadowStr = `${b2w}px 0 0 ${b2c}, -${b2w}px 0 0 ${b2c}, 0 ${b2w}px 0 ${b2c}, 0 -${b2w}px 0 ${b2c}, ${b2w}px ${b2w}px 0 ${b2c}, -${b2w}px -${b2w}px 0 ${b2c}`;
-            }
+            textPreview.style.fontSize = `${size}px`;
+            textPreview.style.lineHeight = lh;
+            textPreview.style.letterSpacing = `${ls}px`;
+            textPreview.style.textAlign = textAlign;
+
+            let shadowStyles = [];
+            textPreview.style.webkitTextStroke = `${outlineLayers[0].width}px ${outlineLayers[0].color}`;
             
-            if (toggleShadow.checked) {
-                shadowStr += (shadowStr ? ', ' : '') + '6px 6px 10px rgba(0,0,0,0.5)';
+            let currentFullWidth = outlineLayers[0].width;
+            for(let i = 1; i < outlineLayers.length; i++) {
+                currentFullWidth += outlineLayers[i].width;
+                const c = outlineLayers[i].color;
+                const w = currentFullWidth;
+                shadowStyles.push(`${w}px 0 0 ${c}, -${w}px 0 0 ${c}, 0 ${w}px 0 ${c}, 0 -${w}px 0 ${c}`);
             }
 
-            textPreview.style.textShadow = shadowStr || 'none';
-            textPreview.style.webkitTextStroke = `${borderWidth.value}px ${borderColor.value}`;
+            if (shadowOn) {
+                shadowStyles.push(`10px 10px 20px rgba(0,0,0,0.4)`);
+            }
+            textPreview.style.textShadow = shadowStyles.join(', ');
 
-            const pickers = document.querySelectorAll('.color-picker');
-            const singleCol = document.getElementById('single-text-color').value;
-            let pickerIdx = 0;
+            const pickers = document.querySelectorAll('.char-picker');
+            const singleColor = document.getElementById('single-text-color').value;
+            let charCount = 0;
 
             textPreview.innerHTML = textInput.value.split('').map(ch => {
                 if (ch === '\n') return '<br>';
-                const color = colorMode === 'single' ? singleCol : (pickers[pickerIdx]?.value || '#000000');
-                pickerIdx++;
-                return `<span style="color: ${color};">${ch}</span>`;
+                const color = colorMode === 'single' ? singleColor : (pickers[charCount]?.value || '#000');
+                charCount++;
+                return `<span style="color: ${color}">${ch}</span>`;
             }).join('');
         }
 
-        function updateFont(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const font = new FontFace('customFont', `url(${e.target.result})`);
-                font.load().then(loaded => {
-                    document.fonts.add(loaded);
-                    textPreview.style.fontFamily = 'customFont';
-                    updateStyle();
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function selectPreset(btn, w, h) {
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-btn'));
-            btn.classList.add('active-btn');
-            const customRow = document.getElementById('custom-size-row');
-            if (w === -1) {
-                customRow.classList.remove('hidden');
-                downloadW = -1;
-            } else {
-                customRow.classList.add('hidden');
-                downloadW = w; downloadH = h;
-            }
-        }
-
-        function renderToCanvas(bgColor) {
-            const scale = 2;
-            const size = parseInt(fontSize.value);
-            const spacing = parseInt(letterSpacing.value);
-            const b1w = parseInt(borderWidth.value);
-            const b1c = borderColor.value;
-            const b2w = enableBorder2.checked ? parseInt(borderWidth2.value) : 0;
-            const b2c = borderColor2.value;
-            const shadow = toggleShadow.checked;
-            const fontFamily = textPreview.style.fontFamily || "GenSenRounded, 'Microsoft JhengHei', sans-serif";
-            const fontStr = `${size}px ${fontFamily}`;
+        function downloadPNG(whiteBg) {
+            const scale = 2; 
+            const size = parseInt(document.getElementById('font-size').value);
+            const lh = parseFloat(document.getElementById('line-height').value);
+            const ls = parseInt(document.getElementById('letter-spacing').value);
+            const shadowOn = document.getElementById('toggle-shadow').checked;
 
             const lines = textInput.value.split('\n');
+            const fontFamily = textPreview.style.fontFamily || "GenSenRounded, sans-serif";
+
             const measure = document.createElement('canvas');
             const mCtx = measure.getContext('2d');
-            mCtx.font = fontStr;
-
+            mCtx.font = `bold ${size}px ${fontFamily}`;
+            
             let maxW = 0;
-            lines.forEach(line => {
-                let lw = 0;
-                for (let i = 0; i < line.length; i++) {
-                    lw += mCtx.measureText(line[i]).width;
-                    if (i < line.length - 1) lw += spacing;
-                }
-                maxW = Math.max(maxW, lw);
+            lines.forEach(l => {
+                let w = 0;
+                for(let char of l) w += mCtx.measureText(char).width + ls;
+                maxW = Math.max(maxW, w);
             });
 
-            const lineH = size * 1.2;
-            const totalH = lineH * lines.length;
-            const pad = Math.max(b1w, b2w) + (shadow ? 20 : 10);
+            const totalH = size * lh * lines.length;
+            const outlineTotalWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
+            const pad = outlineTotalWidth + (shadowOn ? 40 : 20);
 
             const canvas = document.createElement('canvas');
-            canvas.width = (maxW + pad * 2) * scale;
-            canvas.height = (totalH + pad * 2) * scale;
+            const contentW = maxW + pad * 2;
+            const contentH = totalH + pad * 2;
+            
+            canvas.width = contentW * scale;
+            canvas.height = contentH * scale;
             const ctx = canvas.getContext('2d');
             ctx.scale(scale, scale);
 
-            if (bgColor) {
-                ctx.fillStyle = bgColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (whiteBg) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, contentW, contentH);
             }
 
-            ctx.font = fontStr;
+            ctx.font = `bold ${size}px ${fontFamily}`;
             ctx.textBaseline = 'middle';
             ctx.lineJoin = 'round';
 
-            const pickers = document.querySelectorAll('.color-picker');
-            const singleCol = document.getElementById('single-text-color').value;
+            const pickers = document.querySelectorAll('.char-picker');
             let pIdx = 0;
 
-            lines.forEach((line, lIdx) => {
-                let lw = 0;
-                for (let i = 0; i < line.length; i++) {
-                    lw += ctx.measureText(line[i]).width;
-                    if (i < line.length - 1) lw += spacing;
-                }
+            lines.forEach((line, lineIdx) => {
+                let lineW = 0;
+                for(let char of line) lineW += ctx.measureText(char).width + ls;
+                
+                let startX = pad;
+                if (textAlign === 'center') startX = pad + (maxW - lineW) / 2;
+                if (textAlign === 'right') startX = pad + (maxW - lineW);
+                
+                const y = pad + (size * lh * lineIdx) + (size * lh / 2);
 
-                let x = pad;
-                if (currentTextAlign === 'center') x = pad + (maxW - lw) / 2;
-                else if (currentTextAlign === 'right') x = pad + (maxW - lw);
+                let currentX = startX;
+                for(let char of line) {
+                    const charW = ctx.measureText(char).width;
+                    const charColor = colorMode === 'single' ? document.getElementById('single-text-color').value : (pickers[pIdx]?.value || '#000');
 
-                const y = pad + lineH * lIdx + lineH / 2;
-
-                // 為了正確繪製多層描邊，需要先畫最底層（第二層外框），再畫第一層，最後填色
-                let tempX = x;
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    const cw = ctx.measureText(char).width;
-
-                    if (shadow) {
-                        ctx.shadowBlur = 10;
-                        ctx.shadowColor = "rgba(0,0,0,0.5)";
-                        ctx.shadowOffsetX = 6;
-                        ctx.shadowOffsetY = 6;
+                    if (shadowOn) {
+                        ctx.shadowBlur = 20;
+                        ctx.shadowColor = "rgba(0,0,0,0.4)";
+                        ctx.shadowOffsetX = 10;
+                        ctx.shadowOffsetY = 10;
+                        ctx.strokeText(char, currentX, y);
                     }
-
-                    // 1. 第二層外框 (最外面)
-                    if (b2w > 0) {
-                        ctx.strokeStyle = b2c;
-                        ctx.lineWidth = (b1w + b2w) * 2; // 寬度包含內層，看起來才是兩層
-                        ctx.strokeText(char, tempX, y);
-                    }
-
-                    // 2. 第一層外框
-                    if (b1w > 0) {
-                        ctx.shadowColor = "transparent"; // 避免陰影重疊過黑
-                        ctx.strokeStyle = b1c;
-                        ctx.lineWidth = b1w * 2;
-                        ctx.strokeText(char, tempX, y);
-                    }
-
-                    // 3. 填色
                     ctx.shadowColor = "transparent";
-                    ctx.fillStyle = colorMode === 'single' ? singleCol : (pickers[pIdx]?.value || '#000000');
-                    ctx.fillText(char, tempX, y);
 
-                    tempX += cw + spacing;
+                    let runningWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
+                    for(let i = outlineLayers.length - 1; i >= 0; i--) {
+                        ctx.strokeStyle = outlineLayers[i].color;
+                        ctx.lineWidth = runningWidth * 2;
+                        ctx.strokeText(char, currentX, y);
+                        runningWidth -= outlineLayers[i].width;
+                    }
+
+                    ctx.fillStyle = charColor;
+                    ctx.fillText(char, currentX, y);
+
+                    currentX += charW + ls;
                     pIdx++;
                 }
-                pIdx++; // Skip \n
+                pIdx++; 
             });
 
-            return canvas;
-        }
-
-        function downloadPNG(withBg) {
-            const srcCanvas = renderToCanvas(withBg ? '#ffffff' : null);
-            let finalW = downloadW, finalH = downloadH;
-            
-            if (downloadW === -1) {
-                finalW = parseInt(document.getElementById('custom-w').value) || 370;
-                finalH = parseInt(document.getElementById('custom-h').value) || 320;
-            }
-
-            const outCanvas = document.createElement('canvas');
-            if (finalW === 0) {
-                saveLink(srcCanvas, withBg ? 'text_white.png' : 'text_trans.png');
-                return;
-            }
-
-            outCanvas.width = finalW;
-            outCanvas.height = finalH;
-            const ctx = outCanvas.getContext('2d');
-            if (withBg) {
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, finalW, finalH);
-            }
-
-            const ratio = Math.min(finalW / srcCanvas.width, finalH / srcCanvas.height);
-            const dw = srcCanvas.width * ratio;
-            const dh = srcCanvas.height * ratio;
-            ctx.drawImage(srcCanvas, (finalW - dw) / 2, (finalH - dh) / 2, dw, dh);
-            saveLink(outCanvas, withBg ? 'text_white.png' : 'text_trans.png');
-        }
-
-        function saveLink(canvas, name) {
             const link = document.createElement('a');
-            link.download = name;
-            link.href = canvas.toDataURL();
+            link.download = whiteBg ? '我的大字作品_白色背景.png' : '我的大字作品_透明背景.png';
+            link.href = canvas.toDataURL('image/png');
             link.click();
         }
     </script>
