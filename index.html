@@ -67,12 +67,8 @@
             box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
         }
 
-        #text-preview {
-            display: inline-block;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+        #preview-canvas {
             font-family: 'GenSenRounded', "Microsoft JhengHei", sans-serif;
-            font-weight: normal; 
         }
 
         .active-btn {
@@ -188,10 +184,15 @@
                     </button>
                     
                     <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="toggle-shadow" class="w-6 h-6">
-                            <span class="text-lg font-medium text-amber-900">增加柔和陰影</span>
-                        </label>
+                        <span class="block text-base font-bold text-amber-900 mb-2">陰影效果</span>
+                        <select id="shadow-style" oninput="updateStyle()" class="w-full p-3 text-base border-2 border-amber-200 rounded-xl outline-none focus:border-amber-400 bg-white">
+                            <option value="none">無陰影</option>
+                            <option value="soft">柔和陰影</option>
+                            <option value="hard">硬式陰影</option>
+                            <option value="glow">發光光暈</option>
+                            <option value="neon">霓虹燈</option>
+                            <option value="retro">復古長影</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -199,8 +200,8 @@
             <div class="w-full lg:w-1/2 lg:sticky lg:top-4 h-fit">
                 <div class="bg-white p-6 rounded-2xl shadow-xl border border-fuchsia-100">
                     <h2 class="text-2xl font-bold mb-4 text-center text-fuchsia-800">作品預覽</h2>
-                    <div class="preview-bg rounded-xl overflow-hidden flex justify-center items-center p-8 min-h-[400px]">
-                        <div id="text-preview"></div>
+                    <div class="preview-bg rounded-xl overflow-hidden flex justify-center items-center p-6" style="min-height:200px;">
+                        <canvas id="preview-canvas" style="max-width:100%;height:auto;display:block;margin:0 auto;"></canvas>
                     </div>
 
                     <div class="mt-8 space-y-4">
@@ -241,13 +242,13 @@
 
     <script>
         const textInput = document.getElementById('text-input');
-        const textPreview = document.getElementById('text-preview');
+        const previewCanvas = document.getElementById('preview-canvas');
         const outlineLayersList = document.getElementById('outline-layers-list');
         const multiColorContainer = document.getElementById('multi-color-container');
 
         let colorMode = 'multi';
         let textAlign = 'center';
-        // 預設外框粗細調整為 1，顏色為黑色
+        let currentFontFamily = '"GenSenRounded", "Microsoft JhengHei", sans-serif';
         let outlineLayers = [
             { width: 1, color: '#000000' }
         ];
@@ -255,11 +256,10 @@
         window.onload = () => {
             renderOutlineControls();
             handleTextInput();
-            updateStyle();
         };
 
         textInput.addEventListener('input', handleTextInput);
-        ['font-size', 'line-height', 'letter-spacing', 'toggle-shadow', 'single-text-color'].forEach(id => {
+        ['font-size', 'line-height', 'letter-spacing', 'shadow-style', 'single-text-color'].forEach(id => {
             document.getElementById(id).addEventListener('input', updateStyle);
         });
 
@@ -271,7 +271,7 @@
                 const font = new FontFace('userFont', `url(${event.target.result})`);
                 font.load().then(f => {
                     document.fonts.add(f);
-                    textPreview.style.fontFamily = 'userFont';
+                    currentFontFamily = '"userFont", "Microsoft JhengHei", sans-serif';
                     updateStyle();
                 });
             };
@@ -341,17 +341,23 @@
             outlineLayers.forEach((layer, index) => {
                 const div = document.createElement('div');
                 div.className = 'bg-fuchsia-50/50 p-4 rounded-xl border border-fuchsia-100 flex flex-wrap items-center gap-4';
+                const removeBtn = index > 0
+                    ? `<button onclick="removeOutlineLayer(${index})" class="text-pink-400 font-bold px-2 hover:text-pink-600">✕</button>`
+                    : '<div class="w-6"></div>';
                 div.innerHTML = `
                     <div class="flex items-center gap-2">
                         <span class="bg-fuchsia-400 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${index + 1}</span>
                         <span class="font-medium text-fuchsia-800">顏色</span>
                         <input type="color" value="${layer.color}" oninput="updateLayer(${index}, 'color', this.value)" class="shrink-0">
                     </div>
-                    <div class="flex-1 min-w-[150px]">
-                        <span class="block text-xs font-bold text-fuchsia-700 mb-1">粗細</span>
-                        <input type="range" min="0" max="40" value="${layer.width}" oninput="updateLayer(${index}, 'width', this.value)" class="w-full">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-fuchsia-700">粗細</span>
+                        <input type="number" min="0" max="100" value="${layer.width}"
+                            oninput="updateLayer(${index}, 'width', this.value)"
+                            style="width:72px;text-align:center;font-size:1.1rem;font-weight:700;border:2px solid #e9d5ff;border-radius:12px;padding:6px 4px;outline:none;">
+                        <span class="text-xs text-fuchsia-500">px</span>
                     </div>
-                    ${index > 0 ? `<button onclick="removeOutlineLayer(${index})" class="text-pink-400 font-bold px-2 hover:text-pink-600">✕</button>` : '<div class="w-6"></div>'}
+                    ${removeBtn}
                 `;
                 outlineLayersList.appendChild(div);
             });
@@ -362,47 +368,125 @@
             updateStyle();
         }
 
+        // 共用的繪圖核心函式
+        function drawTextToCanvas(ctx, canvasW, canvasH, size, lh, ls, shadowStyle, charColors, scale) {
+            const lines = textInput.value.split('\n');
+            ctx.font = `${size}px ${currentFontFamily}`;
+            ctx.textBaseline = 'middle';
+            ctx.lineJoin = 'round';
+            ctx.miterLimit = 2;
+
+            // 計算每行寬度
+            const lineWidths = lines.map(line => {
+                let w = 0;
+                for (const ch of line) w += ctx.measureText(ch).width + ls;
+                return w;
+            });
+            const maxLineW = Math.max(...lineWidths, 0);
+            const totalH = size * lh * lines.length;
+
+            lines.forEach((line, lineIdx) => {
+                const lineW = lineWidths[lineIdx];
+                let startX;
+                if (textAlign === 'center') startX = (canvasW - lineW) / 2;
+                else if (textAlign === 'right') startX = canvasW - lineW - size * 0.1;
+                else startX = size * 0.1;
+
+                const y = (canvasH - totalH) / 2 + size * lh * lineIdx + size * lh / 2;
+                let currentX = startX;
+                let charIdx = 0;
+                // 計算此行在全文字中的起始 index
+                let globalIdx = 0;
+                for (let li = 0; li < lineIdx; li++) globalIdx += lines[li].length;
+
+                for (const ch of line) {
+                    const charW = ctx.measureText(ch).width;
+                    const charColor = charColors[globalIdx + charIdx] || '#000000';
+
+                    // 陰影（畫在最底層）
+                    ctx.save();
+                    if (shadowStyle === 'soft') {
+                        ctx.shadowColor = 'rgba(0,0,0,0.22)'; ctx.shadowBlur = 10 * (scale||1);
+                        ctx.shadowOffsetX = 4 * (scale||1); ctx.shadowOffsetY = 4 * (scale||1);
+                    } else if (shadowStyle === 'hard') {
+                        ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 0;
+                        ctx.shadowOffsetX = 4 * (scale||1); ctx.shadowOffsetY = 4 * (scale||1);
+                    } else if (shadowStyle === 'glow') {
+                        ctx.shadowColor = 'rgba(255,100,200,0.8)'; ctx.shadowBlur = 20 * (scale||1);
+                        ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+                    } else if (shadowStyle === 'neon') {
+                        ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 30 * (scale||1);
+                        ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+                    } else if (shadowStyle === 'retro') {
+                        ctx.shadowColor = '#c0392b'; ctx.shadowBlur = 0;
+                        ctx.shadowOffsetX = 8 * (scale||1); ctx.shadowOffsetY = 8 * (scale||1);
+                    }
+                    if (shadowStyle !== 'none') {
+                        ctx.fillStyle = charColor;
+                        ctx.fillText(ch, currentX, y);
+                    }
+                    ctx.restore();
+
+                    // 由外到內畫邊框（strokeText，lineJoin=round 保證圓角）
+                    let runningW = outlineLayers.reduce((s, l) => s + l.width, 0);
+                    for (let i = outlineLayers.length - 1; i >= 0; i--) {
+                        ctx.strokeStyle = outlineLayers[i].color;
+                        ctx.lineWidth = runningW * 2;
+                        ctx.strokeText(ch, currentX, y);
+                        runningW -= outlineLayers[i].width;
+                    }
+
+                    // 填字色
+                    ctx.fillStyle = charColor;
+                    ctx.fillText(ch, currentX, y);
+
+                    currentX += charW + ls;
+                    charIdx++;
+                }
+            });
+        }
+
+        function getCharColors() {
+            const pickers = document.querySelectorAll('.char-picker');
+            const singleColor = document.getElementById('single-text-color').value;
+            const chars = textInput.value.split('').filter(c => c !== '\n');
+            return chars.map((_, i) => colorMode === 'single' ? singleColor : (pickers[i]?.value || '#000'));
+        }
+
         function updateStyle() {
-            const size = document.getElementById('font-size').value;
-            const lh = document.getElementById('line-height').value;
-            const ls = document.getElementById('letter-spacing').value;
-            const shadowOn = document.getElementById('toggle-shadow').checked;
+            const size = parseInt(document.getElementById('font-size').value);
+            const lh = parseFloat(document.getElementById('line-height').value);
+            const ls = parseInt(document.getElementById('letter-spacing').value);
+            const shadowStyle = document.getElementById('shadow-style').value;
 
             document.getElementById('val-font-size').textContent = size;
             document.getElementById('val-line-height').textContent = lh;
             document.getElementById('val-letter-spacing').textContent = ls;
 
-            textPreview.style.fontSize = `${size}px`;
-            textPreview.style.lineHeight = lh;
-            textPreview.style.letterSpacing = `${ls}px`;
-            textPreview.style.textAlign = textAlign;
+            // 動態計算 canvas 尺寸
+            const lines = textInput.value.split('\n');
+            const tmpC = document.createElement('canvas');
+            const tmpCtx = tmpC.getContext('2d');
+            tmpCtx.font = `${size}px ${currentFontFamily}`;
+            let maxW = 0;
+            lines.forEach(l => {
+                let w = 0;
+                for (const ch of l) w += tmpCtx.measureText(ch).width + ls;
+                maxW = Math.max(maxW, w);
+            });
+            const outlinePad = outlineLayers.reduce((s, l) => s + l.width, 0);
+            const extraPad = shadowStyle === 'retro' ? 40 : (shadowStyle !== 'none' ? 28 : 14);
+            const pad = outlinePad + extraPad;
+            const cW = Math.max(maxW + pad * 2, 200);
+            const cH = Math.max(size * lh * lines.length + pad * 2, 100);
 
-            let shadowStyles = [];
-            textPreview.style.webkitTextStroke = `${outlineLayers[0].width}px ${outlineLayers[0].color}`;
-            
-            let currentFullWidth = outlineLayers[0].width;
-            for(let i = 1; i < outlineLayers.length; i++) {
-                currentFullWidth += outlineLayers[i].width;
-                const c = outlineLayers[i].color;
-                const w = currentFullWidth;
-                shadowStyles.push(`${w}px 0 0 ${c}, -${w}px 0 0 ${c}, 0 ${w}px 0 ${c}, 0 -${w}px 0 ${c}`);
-            }
+            previewCanvas.width = cW;
+            previewCanvas.height = cH;
 
-            if (shadowOn) {
-                shadowStyles.push(`5px 5px 12px rgba(0,0,0,0.15)`);
-            }
-            textPreview.style.textShadow = shadowStyles.join(', ');
+            const ctx = previewCanvas.getContext('2d');
+            ctx.clearRect(0, 0, cW, cH);
 
-            const pickers = document.querySelectorAll('.char-picker');
-            const singleColor = document.getElementById('single-text-color').value;
-            let charCount = 0;
-
-            textPreview.innerHTML = textInput.value.split('').map(ch => {
-                if (ch === '\n') return '<br>';
-                const color = colorMode === 'single' ? singleColor : (pickers[charCount]?.value || '#000');
-                charCount++;
-                return `<span style="color: ${color}">${ch}</span>`;
-            }).join('');
+            drawTextToCanvas(ctx, cW, cH, size, lh, ls, shadowStyle, getCharColors(), 1);
         }
 
         function generateImage(whiteBg) {
@@ -414,77 +498,23 @@
                 targetH = parseInt(parts[1]);
             }
 
-            const scale = 2; 
+            const scale = 2;
             const size = parseInt(document.getElementById('font-size').value);
             const lh = parseFloat(document.getElementById('line-height').value);
             const ls = parseInt(document.getElementById('letter-spacing').value);
-            const shadowOn = document.getElementById('toggle-shadow').checked;
+            const shadowStyle = document.getElementById('shadow-style').value;
+            const charColors = getCharColors();
 
-            const lines = textInput.value.split('\n');
-            const fontFamily = textPreview.style.fontFamily || "GenSenRounded, sans-serif";
-
-            const measureCanvas = document.createElement('canvas');
-            const mCtx = measureCanvas.getContext('2d');
-            mCtx.font = `${size}px ${fontFamily}`;
-            
-            let contentMaxW = 0;
-            lines.forEach(l => {
-                let w = 0;
-                for(let char of l) w += mCtx.measureText(char).width + ls;
-                contentMaxW = Math.max(contentMaxW, w);
-            });
-
-            const contentTotalH = size * lh * lines.length;
-            const outlineTotalWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
-            const pad = outlineTotalWidth + (shadowOn ? 30 : 15);
-
-            const srcW = contentMaxW + pad * 2;
-            const srcH = contentTotalH + pad * 2;
+            // 以 previewCanvas 的尺寸為基準，高解析度輸出
+            const srcW = previewCanvas.width * scale;
+            const srcH = previewCanvas.height * scale;
             const srcCanvas = document.createElement('canvas');
-            srcCanvas.width = srcW * scale;
-            srcCanvas.height = srcH * scale;
+            srcCanvas.width = srcW;
+            srcCanvas.height = srcH;
             const sCtx = srcCanvas.getContext('2d');
             sCtx.scale(scale, scale);
 
-            sCtx.font = `${size}px ${fontFamily}`;
-            sCtx.textBaseline = 'middle';
-            sCtx.lineJoin = 'round';
-
-            const pickers = document.querySelectorAll('.char-picker');
-            let pIdx = 0;
-
-            lines.forEach((line, lineIdx) => {
-                let lineW = 0;
-                for(let char of line) lineW += sCtx.measureText(char).width + ls;
-                let startX = pad;
-                if (textAlign === 'center') startX = pad + (contentMaxW - lineW) / 2;
-                if (textAlign === 'right') startX = pad + (contentMaxW - lineW);
-                const y = pad + (size * lh * lineIdx) + (size * lh / 2);
-                let currentX = startX;
-
-                for(let char of line) {
-                    const charW = sCtx.measureText(char).width;
-                    const charColor = colorMode === 'single' ? document.getElementById('single-text-color').value : (pickers[pIdx]?.value || '#000');
-                    if (shadowOn) {
-                        sCtx.shadowBlur = 12; sCtx.shadowColor = "rgba(0,0,0,0.15)";
-                        sCtx.shadowOffsetX = 5; sCtx.shadowOffsetY = 5;
-                        sCtx.strokeText(char, currentX, y);
-                    }
-                    sCtx.shadowColor = "transparent";
-                    let runningWidth = outlineLayers.reduce((acc, curr) => acc + curr.width, 0);
-                    for(let i = outlineLayers.length - 1; i >= 0; i--) {
-                        sCtx.strokeStyle = outlineLayers[i].color;
-                        sCtx.lineWidth = runningWidth * 2;
-                        sCtx.strokeText(char, currentX, y);
-                        runningWidth -= outlineLayers[i].width;
-                    }
-                    sCtx.fillStyle = charColor;
-                    sCtx.fillText(char, currentX, y);
-                    currentX += charW + ls;
-                    pIdx++;
-                }
-                pIdx++; 
-            });
+            drawTextToCanvas(sCtx, previewCanvas.width, previewCanvas.height, size, lh, ls, shadowStyle, charColors, scale);
 
             let finalCanvas = srcCanvas;
             if (targetW > 0 && targetH > 0) {
@@ -492,24 +522,13 @@
                 finalCanvas.width = targetW;
                 finalCanvas.height = targetH;
                 const fCtx = finalCanvas.getContext('2d');
-
-                if (whiteBg) {
-                    fCtx.fillStyle = '#ffffff';
-                    fCtx.fillRect(0, 0, targetW, targetH);
-                }
-
-                const scaleX = targetW / (srcCanvas.width / scale);
-                const scaleY = targetH / (srcCanvas.height / scale);
-                const drawScale = Math.min(scaleX, scaleY) * 0.9;
-
-                const drawW = (srcCanvas.width / scale) * drawScale;
-                const drawH = (srcCanvas.height / scale) * drawScale;
-                const offX = (targetW - drawW) / 2;
-                const offY = (targetH - drawH) / 2;
-
+                if (whiteBg) { fCtx.fillStyle = '#ffffff'; fCtx.fillRect(0, 0, targetW, targetH); }
+                const drawScale = Math.min(targetW / (srcW / scale), targetH / (srcH / scale)) * 0.9;
+                const drawW = (srcW / scale) * drawScale;
+                const drawH = (srcH / scale) * drawScale;
                 fCtx.imageSmoothingEnabled = true;
                 fCtx.imageSmoothingQuality = 'high';
-                fCtx.drawImage(srcCanvas, offX, offY, drawW, drawH);
+                fCtx.drawImage(srcCanvas, (targetW - drawW) / 2, (targetH - drawH) / 2, drawW, drawH);
             } else if (whiteBg) {
                 finalCanvas = document.createElement('canvas');
                 finalCanvas.width = srcCanvas.width;
